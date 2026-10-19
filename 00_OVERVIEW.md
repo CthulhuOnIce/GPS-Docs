@@ -12,7 +12,7 @@ This whitepaper provides a comprehensive architectural and mathematical analysis
 2. **Macro and Microeconomics**: The 364 economic sectors (`DFAC`), the micro-production tree (124,000 `CORP`, 248,000 `CRPP`, 620,000 `CBAT`), Leontief input-output matrices, the 26 ministerial budgets, the "Budget en Étoile" (Stars) non-linear curve, tax incidence, sovereign debt (`BankManager`), inflation, and international trade contracts.
 3. **Military & Warfare Systems**: The 120,000 unit pool (`UNIT`, stride `0x750`), unit parameters (air, sea, land, space, strategic ballistic missiles), procurement and maintenance algorithms, spatial combat grids, damage resolution, and conflict records (`CONF`).
 4. **Politics, Popularity & Social Dynamics**: The 120-theme political opinion ledger per nation, orientation tensors (`ORIE`), non-linear policy impact calculations (`importance_action`), damping kernels (`theme_delta`), the Head of State popularity equation, and the 15,000 social/pressure groups (`GROU`).
-5. **Personality & Psychological Profiling**: Character simulation (`PERS`, 51,000 actors, stride `0xad0`) and psychological profiles (`PEPR`, 12,000 records, stride `0x41b8`), loyalty, corruption evaluation (`is_perso_corruptible`), affinity networks, and the interactive diplomatic/meeting negotiation tree (`gere_rdv`).
+5. **Personality, Characters & Private Life Simulation**: Character simulation (`PERS`, 51,000 actors, stride `0xad0`) and psychological profiles (`PEPR`, 12,000 records, stride `0x41b8`), loyalty, corruption evaluation (`is_perso_corruptible`), affinity networks, the interactive diplomatic/meeting negotiation tree (`gere_rdv`), and the Head of State private life engine: marriage & consorts (`CONJ`), family entourage (`RDV_FAMILLE`), lovers/mistresses (`Cphotomin_amant`), nepotism (`NEPO`), and infidelity scandals.
 6. **The Legislative Engine & Law Execution**: How laws are stored (`SCEN`, `DEFA`, `xan.gt`), discrete bitfields vs. continuous sliders, the 5-axis ideological tensor ($TGO_1$–$TGO_5$), forecasting (`calc_effet_loi`), bicameral parliamentary vote tallying (`parlement_vote_lawpack_chambre1_estimation`), decree vs. legislative branching, and dynamic subsystem code dispatch.
 7. **Demography, Healthcare & Environmental Simulation**: Cohort-component population dynamics, epidemiological spread models (`gestion_epidemies`), CO2 carbon budgeting, and climate feedback loops.
 
@@ -65,11 +65,13 @@ In addition to dedicated entity structures, the engine maintains an indexed scal
 
 ### Whitepaper Structure
 
-This report is organized into seven modular volumes located within `_whitepaper/`:
+This report is organized into eight modular volumes located within `_whitepaper/`:
 - `01_SIMULATION_CORE.md`: Pipeline architecture, frame splitting, time dilation, and database synchronization.
 - `02_ECONOMY.md`: Micro-macro economic engine, production trees, Leontief matrix, public finances, star budgets, debt markets, and trade contracts.
 - `03_MILITARY.md`: Unit specifications, combat formulas, procurement, maintenance costs, and geopolitical warfare.
-- `04_POLITICS_AND_POPULARITY.md`: Political ledger, opinion dynamics, damping kernels, popularity formulation, and interest groups.
-- `05_PERSONALITY_AND_CHARACTERS.md`: Personality psychology, corruption checks, diplomatic negotiations, and cabinet management.
+- `04_POLITICS_AND_POPULARITY.md`: Political ledger, complete 120-slot opinion enumeration, damping kernels, popularity formulation, and interest groups.
+- `05_PERSONALITY_AND_CHARACTERS.md`: Personality psychology, corruption checks, diplomatic negotiations, cabinet management, and the Head of State private life engine (marriage, family network, lovers/mistresses, nepotism, and infidelity scandals).
 - `06_LAWS_AND_LEGISLATION.md`: Complete legal architecture: storage, UI editing, parliamentary vote calculations, decree execution, and dynamic subsystem dispatch.
 - `07_DEMOGRAPHY_AND_ENVIRONMENT.md`: Cohort-survival population mechanics, epidemics, environmental systems, and carbon accounting.
+- `08_REGIONS_CITIES_AND_INFRASTRUCTURE.md`: Administrative spatial hierarchy, regional GDP tracking & national factoring, annexation & secession mechanics, and transport, energy, and military infrastructure systems.
+
