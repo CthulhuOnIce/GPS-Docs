@@ -52,3 +52,399 @@ One row per pre-existing claim touched while rewriting `_whitepaper/01_SIMULATIO
 - **Wrong addresses:** 1 function address corrected: `f_140e000` (old text: `bank_step`) → `0x1378460` (`bank_step`). Two further targets were wrong for the named behaviour and had no replacement address: `0x1053e40` (not `plansociaux`) and `0x959710` (a no-op, not `classer_joueur`). Two names were corrected without changing the address: `0x22c3590` is `reactions_process` (not `trigger`), and `0x1378460` is `bank_step` (not `bank`).
 - **Claims removed:** 9. They are V1-008 (menu/pause semantics), V1-014 (36 phases), V1-019 (heaviest step), V1-021 (Leontief matrix), V1-022 (124,000 decision logic), V1-024 (8.48 GB), V1-028 (delta compression), V1-035 (plansociaux description), V1-036 (classer_joueur description).
 - **New corpus-derived claims added:** 16. They are the exact f_25b6690 smoothing branch; the f_1c37d70 hour accumulator and date construction; the millisecond-timestamp interpretation of 0x4813c0a8 (f_25cafe0/f_25dd540/f_25a7630); the day-serial interpretation of 0x464916a8; the exact 0x50ef4788 increment expression; the f_239f3b0 initialisation; bank_step's rounding rule; the 1×prof_begin/56×prof_end count; mutex_scope(3,1) plus the IDME log string; the 19 Etape labels and the missing Etape10; the unsigned -1 return of the stage driver; es_base modes 2/3/4/7; the NATI 4-byte tag + 4-byte size header; the 299-iteration nation loop in f_8c5310 (and f_8c5500's `while (iVar6 < 300)`, also 299 iterations); the 4,000,000 × 16-byte variable-store allocation; and the 0x41b8/0x1f60/0xad0 strides tied to their base globals.
+
+## T-007 structural corrections (D-016 restyle)
+
+Two structural facts in the stage driver were corrected in the volume during the D-016 restyle. Both are verified against the corpus of record. The 38 rows above keep their original verdicts; nothing else in them changed.
+
+| claim_id | what changed | corpus_evidence | verdict |
+| --- | --- | --- | --- |
+| V1-039 | The `< 7` early-work gate is a two-conjunct condition: `((int)param_1 < 7) && (bVar42 == 0)`. `bVar42` is set to `_DAT_4649165c != 0` at 2045459, stored at 2045460 and reloaded at 2046210. The volume pseudocode now reads `stage < 7 and mode_value == 0` with `mode_value = global 4649165c`, and mermaid G7 reads `stage < 7 and 4649165c == 0`. | `calc_monde_debut_tour_etapes` 0x1409f40 corpus 2045459-2045460, 2046210, 2046396 | corrected |
+| V1-040 | The `< 3` block has a real early return: corpus 2045876-2045879 sets the return value to 2 and jumps to 2048636, which runs `f_12bd280(); return (ulonglong)uVar41;`. Etapes 2-19 are skipped on that path. The section 3 mermaid now carries the edge `D3 -> RET["early return 2, skips Etapes 2-19"]`. | `calc_monde_debut_tour_etapes` 0x1409f40 corpus 2045876-2045879, 2048636-2048638 | corrected |
+
+## Raw decompiler excerpts moved out of the volume body (D-016)
+
+These are the decompiler excerpts that the four volume pseudocode blocks contained before the T-007 restyle. They are kept here, with the corpus ranges, so the structural claims stay checkable while the volume body stays readable. The `> Evidence:` footer under each restyled block cites the same ranges.
+
+### Temporal core
+
+`f_25b6690` corpus 4847341-4847356; `f_1c37d70` corpus 3294553-3294761; `calc_monde_fin_tour` excerpt corpus 2050082-2050107.
+
+```c
+// f_25b6690 @ 0x25b6690 (corpus 4847341) -- seconds from tick counter
+float f_25b6690(void) {
+    if (_DAT_70ee6548 != 0.0) {
+        d = ((double)_DAT_70ee651c + _DAT_70ee6540) * _DAT_70ee6548
+            + (1.0 - _DAT_70ee6548) * _DAT_70ee6528;
+        if ((double)_DAT_70ee6524 * _DAT_70ee6530 < d - _DAT_70ee6528)
+            d = _DAT_70ee6528 - (double)_DAT_70ee6524 * _DAT_70ee6530;
+        return (float)(d / (double)_DAT_70ee6524);
+    }
+    return (float)(_DAT_70ee6528 / (double)_DAT_70ee6524);
+}
+
+// f_1c37d70 @ 0x1c37d70 (corpus 3294553) -- game-hour accumulator and date build
+undefined4 f_1c37d70(void) {
+    mutex_scope(0xf, 1);
+    uVar12 = 0;
+    auStackX_10[0] = 0;
+    if (_DAT_46209e1c == 0) {
+        if (_DAT_464ddc84 != 0) {
+            fVar14 = (float)f_25b6690();
+            _DAT_464ddc8c = (fVar14 - _DAT_46054ecc) - _DAT_464ddc88 * 24.0;
+            uVar12 = 4294967295U;
+            auStackX_10[0] = 4294967295U;
+        }
+        if (_DAT_46495ec4 < 1) {
+            if ((_DAT_322a4f4 == 0.0) || ((_DAT_464de20c + 2U & 4294967291U) == 0)) {
+                fVar14 = (float)f_25b6690();
+                fVar14 = fVar14 - _DAT_46054ecc;
+                _DAT_464ddc8c = fVar14;
+            } else {
+                if (_DAT_46495ec4 == -1) {
+                    _DAT_46495ec4 = 0;
+                    _DAT_464ddc8c = (float)f_25b6690();
+                    _DAT_464ddc8c = _DAT_464ddc8c - _DAT_46054ecc;
+                }
+                if (_DAT_4649165c == 0 && _DAT_4649166c == 0) {
+                    fVar14 = (float)f_25b6690();
+                    fVar14 = ((fVar14 - _DAT_464ddc8c) - _DAT_46054ecc)
+                             / (_DAT_464ddc88 / _DAT_322a4f4);
+                }
+                else
+                    fVar14 = (-_DAT_464ddc8c - _DAT_46054ecc)
+                             / (_DAT_464ddc88 / _DAT_322a4f4);
+                fVar16 = fVar14;
+                if (_DAT_4649165c == 0) {
+                    if (1.0 < _DAT_464ddc8c) _DAT_464ddc8c = 1.0;
+                    fVar16 = 1.0;
+                    if (fVar14 <= 1.0) fVar16 = fVar14;
+                }
+                fVar15 = 0.0;
+                if (0.0 <= fVar16) fVar15 = fVar16;
+                fVar15 = _DAT_464ddc9c + fVar15;
+                _DAT_464ddc9c = fVar15;
+                fVar16 = floorf(fVar15);
+                if (fVar16 != 0.0) {
+                    _DAT_464ddc9c = fVar15 - fVar16;
+                    fVar15 = floorf((_DAT_464ddc98 + fVar16) / 24.0);
+                    if (((float)_DAT_4649481c < fVar15) &&
+                        ((((_DAT_324da98 != 0 || ((float)(_DAT_46494820 + 1) < fVar15))
+                           || (cVar1 = f_91e5c0(), fVar14 = _DAT_464ddc8c, cVar1 == 0))
+                          && (_DAT_4649165c == 0))) {
+                        fVar14 = (float)f_25b6690();
+                        fVar14 = (fVar14 - _DAT_46054ecc)
+                                 - (_DAT_464ddc88 / _DAT_322a4f4) * _DAT_464ddc9c;
+                        fVar16 = 0.0;
+                        _DAT_464ddc9c = 1.0;
+                        _DAT_464ddc8c = fVar14;
+                    }
+                    _DAT_464ddc98 = _DAT_464ddc98 + fVar16;
+                }
+            }
+        } else {
+            fVar14 = (float)f_25b6690();
+            _DAT_464ddc8c = (fVar14 - _DAT_46054ecc) - (float)_DAT_46495ec4;
+            fVar15 = (float)f_25b6690();
+            fVar14 = _DAT_464ddc8c;
+            fVar16 = (float)_DAT_46495ec4;
+            fVar15 = floorf((fVar15 - _DAT_464ddc8c) - _DAT_46054ecc);
+            if (fVar16 <= fVar15) fVar16 = fVar15;
+            _DAT_464ddc98 = _DAT_464ddc98 + fVar16;
+            _DAT_46495ec4 = -1;
+            auStackX_10[0] = 1;
+            uVar12 = 1;
+        }
+        if (_DAT_4649165c == 0) {
+            _DAT_46054ecc = (float)f_25b6690();
+            _DAT_46054ecc = _DAT_46054ecc - _DAT_464ddc8c;
+        } else {
+            _DAT_46054ecc = -fVar14;
+        }
+        if (_DAT_46209e20 != 0) {
+            _DAT_1844bd08 = _DAT_464ddc98;
+            _DAT_1844bd0c = _DAT_464ddc9c;
+        }
+    } else {
+        _DAT_464ddc98 = _DAT_1844bd08;
+        _DAT_464ddc9c = _DAT_1844bd0c;
+    }
+    iVar10 = (int)_DAT_464ddc98;
+    puVar4 = f_25a7630(&tmp, 0, 0, 0, iVar10, 0, 0);       // ms from hours
+    puVar4 = f_25a7b90(&tmp2, _DAT_47938838, *puVar4);
+    f_25a7940(&DAT_4813c0a8, &lStackX_8, *puVar4);          // write ms timestamp
+    f_25a7880(); f_25a7880(); f_25a7880();
+    _DAT_46494828 = f_25e9b60(&DAT_4813c0a8);               // year
+    _DAT_46494824 = f_25df0d0(&DAT_4813c0a8);               // month
+    _DAT_46494814 = f_25d2b10(&DAT_4813c0a8);
+    lVar5 = f_25dd540(&DAT_4813c0a8);
+    iVar8 = _DAT_464916a8;
+    _DAT_46494808 = (undefined4)lVar5;
+    _DAT_464916a8 = f_25cafe0(_DAT_4813c0a8);               // day serial
+    _DAT_46494818 = f_25da840(&DAT_4813c0a8);
+    plVar6 = f_25a7610(&lStackX_8, _DAT_46494828, 1, 1);
+    iVar3 = f_25cafe0(*plVar6);
+    _DAT_46494810 = (_DAT_464916a8 - iVar3) + 1;            // day-of-year
+    f_25a7880();
+    plVar6 = (longlong *)f_25a7630(&lStackX_8, 0, 0, 0, iVar10, 0, 0);
+    _DAT_4649481c = f_25cafe0(*plVar6);
+    f_25a7880();
+    if (((_DAT_464916a8 != iVar8) && (_DAT_46494824 == 2)) &&
+        ((_DAT_46494814 == 1 && (lStackX_8._0_2_ = 1, 1 < _DAT_322a3f4)))) {
+        do {
+            // nation pair loop body 3294700-3294731:
+            // f_1a414d0 / f_1a216c0 with masks 0xfffeffffffffffff,
+            // 0xffff7fffffffffff, 0x1000000000000
+            // (not read: full loop body)
+        } while ((short)lStackX_8 < _DAT_322a3f4);
+    }
+    plVar6 = f_25a7610(&lStackX_8, _DAT_46494828 + 1, 1, 1);
+    plVar7 = f_25a7610(&lStackX_8, _DAT_46494828, 1, 1);
+    iVar8 = f_25cafe0(*plVar6);
+    iVar3 = f_25cafe0(*plVar7);
+    _DAT_322a4e0 = (float)(iVar8 - iVar3);
+    f_25a7880(); f_25a7880();
+    plVar6 = f_25a7610(&lStackX_8, _DAT_46494828, 1, 1);
+    plVar7 = f_25a7610(&lStackX_8, _DAT_46494828 - 1, 1, 1);
+    iVar8 = f_25cafe0(*plVar6);
+    iVar3 = f_25cafe0(*plVar7);
+    _DAT_322a4e4 = (float)(iVar8 - iVar3);
+    f_25a7880(); f_25a7880();
+    _DAT_46495e7c = (int)(_DAT_46494828 - _DAT_4649482c) % 0x1d + 1;
+    _DAT_464ddc90 = _DAT_464ddcb0;
+    if (_DAT_46209e1c == 0) {
+        _DAT_464ddc90 = (double)(_DAT_464ddc9c + _DAT_464ddc98);
+    }
+    _DAT_4649480c = (int)((_DAT_464ddc90 - (double)_DAT_464ddc98) * 60.0);
+    if (_DAT_4649480c < 0) {
+        _DAT_4649480c = 0;
+    } else if (0x3b < _DAT_4649480c) {
+        _DAT_4649480c = 0x3b;
+    }
+    mutex_scope(0xf, 0);
+    return uVar12;
+}
+
+// calc_monde_fin_tour @ 0x140e5d0 (corpus 2048643) -- only advancing write to 50ef4788
+// (not read: the other 552 corpus lines of the function, 2048643-2051194)
+if (_DAT_4649165c == 0 && _DAT_463d1a7c == 0) {
+    plVar17 = f_25a7610(&tmp1, 0, 0, (int)_DAT_50ef4788);
+    uVar13 = f_25e9b60(plVar17);
+    plVar17 = f_25a7610(&tmp2, uVar13 + 1, 1, 1);          // 1 Jan next year
+    plVar18 = f_25a7610(&tmp3, 0, 0, (int)_DAT_50ef4788);
+    uVar13 = f_25e9b60(plVar18);
+    plVar18 = f_25a7610(&tmp4, uVar13, 1, 1);              // 1 Jan this year
+    iVar40 = f_25cafe0(*plVar17);
+    iVar14 = f_25cafe0(*plVar18);
+    f_25a7880(); f_25a7880(); f_25a7880(); f_25a7880();
+    dVar55 = ((double)(iVar40 - iVar14) / 365.0) * 0.038461538461538464 * 365.25
+             + _DAT_50ef4788;
+    iVar40 = bank_step(dVar55);
+    if (_DAT_464916a8 == iVar40 + 3) DAT_4649484b = 1;
+    iVar40 = bank_step(dVar55);
+    if (_DAT_464916a8 == iVar40 + 4) {
+        DAT_4649484b = 0;
+        _DAT_50ef4788 = dVar55;
+    }
+}
+```
+
+### Daily driver
+
+`calc_monde` corpus 2029428 head; ordered call sites 2030531-2033073; body 15,853 lines (2029428-2045280).
+
+```c
+// calc_monde @ 0x13f3290 (corpus 2029428, 15,853 lines)
+// (not read: the full 93,356-byte body; only the head and the ordered call sites were read)
+void calc_monde(uint param_1, ...) {
+    mutex_scope(3, 1);                       // corpus 2030531
+    // (not read: setup before the first temporal call)
+    f_1c37d70();                             // corpus 2030564, game-hour/date update
+    // (not read: early scenario setup)
+    prof_begin(pppdVar20);                   // one call, corpus 2030705
+    // observed order (calc_monde_steps.txt, observed not decompiled):
+    // (not read: selected call-site names in first-occurrence order; arguments and per-call guards omitted)
+    maj_sat();
+    maj_chemin_nation();
+    maj_agenda();
+    gere_requetes();
+    gere_rdv();
+    gere_histo();
+    calc_actions();
+    calc_unites();
+    org_adh_loop();
+    reactions_process();
+    f_1053e40();
+    calc_monde_debut_tour_etapes(_DAT_324da9c);   // corpus 2031956
+    // (not read: the branching around the call, corpus 2031956-2032040)
+    gereAccordMainOeuvreLissee();            // only when (int)_DAT_324da9c < 0
+    // (not read: the remaining daily subsystems; order taken from the call list)
+    _DAT_324daa0 = calc_monde_fin_tour(_DAT_324daa0);   // corpus 2033073 call site (2048643 is the calc_monde_fin_tour header)
+    // ... 56 x prof_end() in total
+}
+```
+
+### Stage driver
+
+`calc_monde_debut_tour_etapes` corpus 2045281-2048638. The two corrected facts are at 2046396 (two-conjunct `< 7` gate) and 2045876-2045879 -> 2048636 (early return 2).
+
+```c
+// calc_monde_debut_tour_etapes @ 0x1409f40 (corpus 2045281) -- early gates + 19 Etape labels
+ulonglong calc_monde_debut_tour_etapes(uint param_1) {
+    f_2793510();
+    // label "calc_monde_debut_tour"
+    if (param_1 == 0) {
+        DAT_326caa01 = '\x01';
+        DAT_326caa02 = '\x01';
+    }
+    /* label "Debut" */
+    // (not read: setup/logging block before the <1 gate)
+    // early-work gate, NOT Etape1
+    if ((int)param_1 < 1) {
+        if (_DAT_4649165c == 0) {
+            // (not read: full logging block 2045629-2045663; calls include
+            // f_85fdf0, f_25e9800, f_25e97b0, f_25e9760, f_25e9670,
+            // f_1ecb9e0, f_959710)
+        }
+        f_140e000();
+        if (DAT_4649484b == '\0' && (int)param_1 < 1) f_1a252a0((undefined1 *)G_50ef2200);
+        if (_DAT_4649165c < -1) {
+            // nation loop: f_9ebf20, f_9eac60, f_9defe0, f_9de5d0,
+            // f_1a38620, f_1a36d10, f_9b4df0, f_977360, f_9e8fb0
+            // (not read: full loop)
+        }
+        // (not read: clock/timing guard 2045767-2045772)
+    }
+    // early-work gate, NOT Etape2
+    if ((int)param_1 < 2) {
+        f_1cc9370();
+        f_1cc8d90(_DAT_464916a8, ...);
+        // (not read: clock/timing guard 2045781-2045794)
+    }
+    /* label "Etape1" (corpus 2045796) */
+    if ((int)param_1 < 3) {
+        if (DAT_326caa01 != '\0') {
+            puVar12 = (undefined4 *)f_1a4e8d0();
+            f_1a50500(puVar12);
+        }
+        piVar13 = (int *)f_1a4e8d0();
+        uVar39 = 0;
+        piVar36 = (int *)(ulonglong)(bVar42 ^ 1);
+        f_1a4d9f0(piVar13, _DAT_4649168c, bVar42 ^ 1, 0);
+        if ((extraout_AL == '\0') && (DAT_463d1b41 == '\0')) {
+            uVar41 = 2;
+            DAT_326caa01 = '\0';
+            goto LAB_7ff647c7df98;   // early return path
+        }
+        DAT_326caa01 = '\x01';
+        // (not read: clock/timing guard 2045882-2045924)
+    }
+    // (not read: the rest of the Etape1 block up to the Etape2 label at 2046212)
+    /* label "Etape2" (corpus 2046212) */
+    if ((int)param_1 < 4) {
+        f_159bfe0();
+        for (iVar31 = *(int *)(_DAT_5d85ada0 + 4); 0 < iVar31;
+             iVar31 = *(int *)((longlong)iVar31 * 0xad0 + 4 + _DAT_5d85ada0)) {
+            // f_21bf540 / f_10f2060 on the 0x41b8 profile record
+            // (not read: full loop)
+        }
+        // (not read: clock/timing guard 2046310-2046327)
+    }
+    if ((int)param_1 < 5) {
+        f_1c386d0();
+        // (not read: clock/timing guard 2046339-2046367)
+    }
+    if ((int)param_1 < 6) {
+        f_1c408f0();
+        // (not read: clock/timing guard 2046379-2046395)
+    }
+    if ((int)param_1 < 7) { /* clock/timing only */ }   // T-007: corpus 2046396 also requires (bVar42 == 0)
+    // (not read: the rest of the Etape2 block up to the Etape3 label at 2046427)
+    /* label "Etape3" (corpus 2046427) */
+    // f_193af90 on 0x41b8 * index + _DAT_1e660190 (corpus 2046501)
+    // labels Etape4..Etape20 (19 labels total; no Etape10)
+    // (not read: the remaining stage bodies)
+    uVar41 = 4294967295U;   // (uint)-1; corpus writes all bits set
+    f_12bd280();
+    return (ulonglong)uVar41;
+}
+```
+
+### Serializer and layout
+
+`Cdatabase__es_base` corpus 2072351-2073839; `f_147d030` corpus 2111594-2111600; `f_8c5310` corpus 114686-114716; `variable_store_get` corpus 105569-105588.
+
+```c
+// Cdatabase__es_base @ 0x143acd0 (corpus 2072351)
+ulonglong Cdatabase__es_base(uint param_1, ushort *param_2, ulonglong param_3, undefined8 param_4) {
+    // (not read: setup and header path handling before the mode dispatch)
+    puVar30 = variable_store_get();
+    f_1376270(...);
+    if (param_1 == 5) {
+        uVar58 = io_read(puVar30, 0x40d9908);
+    } else if (param_1 == 1) {
+        uVar58 = f_146c790(puVar30, 1, p2, ...);
+    } else if (param_1 == 6) {
+        uVar58 = io_write(puVar30, 0x40d9908);
+    } else if (param_1 == 2) {
+        uVar58 = f_146c790(puVar30, 2, p2, ...);
+    } else if (param_1 == 3) {
+        uVar58 = f_146c790(puVar30, 3, p2, ...);
+    } else if (param_1 == 4) {
+        inlined_stub_45(puVar30, 0, 0x40d9908);
+        uVar58 = f_146c790(puVar30, 3, p2, ...);
+    } else if (param_1 == 7) {
+        uVar58 = f_146c790(puVar30, 3, p2, ...);
+    }
+    // (not read: the rest of the 39,622-byte function)
+}
+
+// f_147d030 @ 0x147d030 (corpus 2111365) -- NATI record header
+uStack_12088 = 0x645310;          // record size
+uStack_1208c = 0x4e415449;        // "NATI"
+f_8604f0(fd, &uStack_1208c, param_3);
+f_8604f0(fd, &uStack_12088, param_3);
+
+// f_8c5310 @ 0x8c5310 (corpus 114686) -- nation scan, only when param_1 == 0x166
+float f_8c5310(short param_1, int param_2) {
+    if (param_1 == 0x166) {
+        piVar1 = (int *)G_5c841f1c;
+        lVar2 = 299;
+        lVar3 = 0x645310;
+        fVar5 = 0.0;
+        do {
+            if (0 < *piVar1) {
+                dVar4 = f_1a37c40((longlong)param_2 * 0x4068 + lVar3
+                                  + _DAT_46208908 + 0xcbc8);
+                if (fVar5 <= (float)dVar4) fVar5 = (float)dVar4;
+            }
+            lVar3 = lVar3 + 0x645310;
+            piVar1 = piVar1 + 1;
+            lVar2 = lVar2 + -1;
+        } while (lVar2 != 0);
+        return fVar5;
+    }
+    dVar4 = f_1a37c40((longlong)param_1 * 0x645310 + _DAT_46208908
+                      + (longlong)param_2 * 0x4068 + 0xcbc8);
+    return (float)dVar4;
+}
+
+// variable_store_get @ 0x8b9490 (corpus 105569)
+// The guard indexes a nested pointer chain at [field 0x514e64 in variable_store_get];
+// the displacement is a field offset, not an address (D-010).
+undefined *variable_store_get(void) {
+    if (*(int *)(*(longlong *)(*(longlong *)(unaff_GS_OFFSET + 0x58)
+                + (ulonglong)_DAT_73be39b0 * 8) + 0x514e64) < _DAT_73ab228) {
+        operator_new(&DAT_73ab228);
+        if (_DAT_73ab228 == -1) {
+            f_27933fc(&DAT_32d1920, 0x10, 4000000, f_1cc89c0);
+            _DAT_73ab220 = 1;
+            f_1cca000((int *)&DAT_32d1920);
+            f_27933e4();
+            operator_delete(&DAT_73ab228);
+            return &DAT_32d1920;
+        }
+    }
+    return &DAT_32d1920;
+}
+```
