@@ -20,78 +20,71 @@ flowchart TD
 ```
 
 ```pseudocode
-// traversal: f_85d580, corpus lines 41991 and 42005
-sVar5 = *(short *)((longlong)param_1 * 0x645310 + 0x2f0 + NATI_BASE);
-while (0 < sVar5) {
-    // sVar5 is a REGI index
-    sVar5 = *(short *)((longlong)sVar5 * 0x910 + REGI_BASE);
-}
+For each nation record:
+    first_region = nation.first_region_id          // nation field +0x2f0
+    while first_region > 0:
+        visit region first_region
+        first_region = region.next_region_id       // region field +0x00
 
-// unlink: f_1c01830, corpus lines 3265819-3265832
-if (*(int *)(nation * 0x645310 + 0x2f0 + NATI_BASE) == target) {
-    *(int *)(nation * 0x645310 + 0x2f0 + NATI_BASE) = *target;
-} else {
-    p = *(int *)(nation * 0x645310 + 0x2f0 + NATI_BASE);
-    while (0 < p) {
-        next = *(int *)(p * 0x910 + REGI_BASE);
-        if (target == next)
-            *(int *)(p * 0x910 + REGI_BASE) = *(int *)(next * 0x910 + REGI_BASE);
-        p = next;
-    }
-}
+To unlink one target region from a nation's list:
+    if nation.first_region_id == target:
+        nation.first_region_id = target.next_region_id
+    else:
+        current = nation.first_region_id
+        while current > 0:
+            if current.next_region_id == target:
+                current.next_region_id = target.next_region_id
+                stop
+            current = current.next_region_id
 ```
+> Evidence: f_85d580 [fn 0x85d580], corpus 41991 and 42005; f_1c01830 [fn 0x1c01830], corpus 3265819-3265832. Strides: `[qty 0x645310 stride]` from f_1399d60:1991897, `[qty 0x910 stride]` from f_139bb40:1993157.
 
 ### 1.1 Nation Array and Activation
 
-The nation array base is `[global 0x46208908 i64]`. The loader `[fn 0x1399d60 f_1399d60]` advances the destination pointer by `[qty 0x645310 stride]` for every record (corpus line 1991897), and `[fn 0x85d580 f_85d580]` indexes a record with `param_1 * 0x645310` (corpus line 41991). `Cdatabase__es_base` calls the loader with a count (corpus line 2074049). That count is set to `[qty 300 nation-slots]` for the normal path and to the live counter `[global 0x322a3f4 i32]` for the other path (corpus lines 2074045-2074047). The live counter is initialised to 1 in `[fn 0x1cbac20 f_1cbac20]` (corpus line 3345979).
+The nation array base is `[global 0x46208908 i64]`. The loader `[fn 0x1399d60 f_1399d60]` advances the destination pointer by `[qty 0x645310 stride]` for every record (corpus line 1991897), and `[fn 0x85d580 f_85d580]` indexes a record with the same stride (corpus line 41991; the multiplying expression is in the pseudocode block). `Cdatabase__es_base` calls the loader with a count (corpus line 2074049). That count is set to `[qty 300 nation-slots]` for the normal path and to the live counter `[global 0x322a3f4 i32]` for the other path (corpus lines 2074045-2074047). The live counter is initialised to 1 in `[fn 0x1cbac20 f_1cbac20]` (corpus line 3345979).
 
-`nation_is_active` is not a flag test. It is:
-
-```c
-return *(int *)(param_1 + 0x2f0) != 0;   // f_1a47850, corpus line 2942160
-```
-
-So a nation is active when its first-region field is non-zero. `[fn 0x1c30ef0 f_1c30ef0]` allocates a region and stores the new id into that same field when the nation has none (corpus lines 3290386-3290390).
+`nation_is_active` is not a flag test: it returns true when `[field 0x2f0 in NATI]` is non-zero (`[fn 0x1a47850 nation_is_active]`, corpus line 2942160). So a nation is active when its first-region field is non-zero. `[fn 0x1c30ef0 f_1c30ef0]` allocates a region and stores the new id into that same field when the nation has none (corpus lines 3290386-3290390).
 
 ### 1.2 Region Record, Identity and the Linked List
 
-The region array is loaded by `[fn 0x139bb40 f_139bb40]`, which adds `0x910` per record (corpus line 1993157). Its count is the live region counter `[global 0x463d1b48 i32]`, passed at corpus line 2074132. The counter is initialised to 1 at corpus line 3345982 and incremented after each allocation at corpus line 3291928. The shipped data file's extent divided by the record size gives 1,309 records, but the corpus does not contain that number as a literal; the loader uses the counter.
+The region array is loaded by `[fn 0x139bb40 f_139bb40]`, which adds `[qty 0x910 stride]` per record (corpus line 1993157). Its count is the live region counter `[global 0x463d1b48 i32]`, passed at corpus line 2074132. The counter is initialised to 1 at corpus line 3345982 and incremented after each allocation at corpus line 3291928. The shipped data file's extent divided by the record size gives 1,309 records, but the corpus does not contain that number as a literal; the loader uses the counter. The old `0x52d` is 1,325, not 1,309: `0x52d` occurs 202 times in the corpus as an unrelated bound, while 1,309 = `0x51d` and its only two literals are unrelated assignments.
 
-The region allocator `[fn 0x1c32e50 f_1c32e50]` writes the record at index `[global 0x463d1b48 i32]` (corpus lines 3291882-3291906):
+The region allocator `[fn 0x1c32e50 f_1c32e50]` writes the record at index `[global 0x463d1b48 i32]` (corpus lines 3291881-3291906):
 
 | Field | Evidence | Meaning established by the code |
 | :--- | :--- | :--- |
-| `[field 0x0 in REGI]` | `*puVar11 = *(undefined4 *)(param_1 + 0x178);` line 3291886 | next region id / previous list head |
-| `[field 0x4 in REGI]` | `*(int *)(lVar10 + G_47e23354) = _DAT_463d1b48;` line 3291885 | self region id |
-| `[field 0x14 in REGI]` | `*(int *)(lVar10 + G_47e23364) = (int)*param_1;` line 3291887 | integer nation id |
-| `[field 0x28 in REGI]` | lines 3291889-3291890 | 16-byte tagged value (double payload, tag at `[field 0x30 in REGI]`) |
-| `[field 0x38 in REGI]` | lines 3291898-3291901 | 16-byte tagged value |
-| `[field 0x48 in REGI]` | line 3291897 | integer payload |
+| `[field 0x0 in REGI]` | `[fn 0x1c32e50 f_1c32e50]` line 3291885 | next region id / previous list head |
+| `[field 0x4 in REGI]` | `[fn 0x1c32e50 f_1c32e50]` line 3291884 | self region id |
+| `[field 0x14 in REGI]` | `[fn 0x1c32e50 f_1c32e50]` line 3291886 | integer nation id |
+| `[field 0x28 in REGI]` | `[fn 0x1c32e50 f_1c32e50]` lines 3291889-3291890 | 16-byte tagged value (double payload, tag at `[field 0x30 in REGI]`) |
+| `[field 0x38 in REGI]` | `[fn 0x1c32e50 f_1c32e50]` lines 3291898-3291901 | 16-byte tagged value |
+| `[field 0x48 in REGI]` | `[fn 0x1c32e50 f_1c32e50]` line 3291897 | integer payload |
 
-The `+0x28` value is read as a nation reference: `[fn 0x857ff0 AVTerritoire__calc_prix_territoire]` reads it, converts it to an integer and multiplies by `[qty 0x645310 stride]` to index the nation array (corpus lines 38187-38189). The `+0x38` value is not a nation reference: `[fn 0x1992f10 f_1992f10]` reads it as an integer and multiplies by `0xb88` to index the company array `[global 0x5d859dc8 i64]` (corpus line 2803960).
+The `[field 0x28 in REGI]` value is read as a nation reference: `[fn 0x857ff0 AVTerritoire__calc_prix_territoire]` reads it, converts it to an integer and multiplies by `[qty 0x645310 stride]` to index the nation array (corpus lines 38187-38189). The `[field 0x38 in REGI]` value is not a nation reference: `[fn 0x1992f10 f_1992f10]` reads it as an integer and multiplies by `[qty 0xb88 stride]` to index the company array `[global 0x5d859dc8 i64]` (corpus line 2803960).
 
 The list is a genuine singly-linked list because both the store and the traversal are visible. The store is `[fn 0x1c01830 f_1c01830]` (corpus lines 3265819-3265832): it replaces the nation's `[field 0x2f0 in NATI]` head or rewrites the predecessor's `[field 0x0 in REGI]`. The traversal is `[fn 0x85d580 f_85d580]` (corpus lines 41991 and 42005).
 
 ### 1.3 City Record
 
-The city array base is `[global 0x26e03518 i64]`. `[fn 0x13a07b0 f_13a07b0]` allocates `param_3 * 0x9cf8` bytes and copies the records (corpus lines 1996505-1996515); the count comes from the save stream at corpus line 2076846.
+The city array base is `[global 0x26e03518 i64]`. `[fn 0x13a07b0 f_13a07b0]` allocates count × `[qty 0x9cf8 stride]` bytes and copies the records (corpus lines 1996505-1996515); the count comes from the save stream at corpus line 2076846.
 
 The corpus exposes these city fields:
 
 | Field | Evidence | Meaning established by the code |
 | :--- | :--- | :--- |
+| `[field 0x0 in VILL]` | `[fn 0x12f2010 f_12f2010]` line 1937098; `[fn 0x12f3de0 f_12f3de0]` line 1938482; `[fn 0x13000f0 f_13000f0]` line 1942298 | integer handle/id: the value is OR-ed with `[qty 0x2000 flag-bit]` at 1937098, compared for identity at 1938482, and used as an index into a 16-bit lookup array at 1942298 |
 | `[field 0x4 in VILL]` | `f_937500` lines 192372-192373 | integer multiplied by `[qty 0x8808c grid-stride]` to index a per-city grid |
 | `[field 0x8 in VILL]` | `gestion_popu_warville` line 4125207 | uint compared to `2` on the combat path |
-| `[field 0x20 in VILL]` | `f_92a0b0` line 184420 | integer multiplied by `0x750` to index a `0x750`-stride array |
+| `[field 0x20 in VILL]` | `f_92a0b0` line 184420 | integer multiplied by `[qty 0x750 stride]` to index a `[qty 0x750 stride]` array |
 | `[field 0x28 in VILL]` | `gestion_popu_warville` line 4125208 | day stamp compared to `[global 0x464916a8 i32] - 1` |
 | `[field 0x2c in VILL]` | `gestion_popu_warville` line 4125201 | integer tested for `< 1` |
 | `[field 0x34 in VILL]` | `f_f92060` line 1439686 | flag word OR-ed with `[qty 0xc0000 flag-bits]` |
 
-The old `+0x00` city id, `+0x04` parent `REGI` id, `+0x08` peace/contested/siege enumeration, `+0x28` "last bombardment", and `+0x34` mayor pointer are not supported. The code has a combat branch that tests `[field 0x8 in VILL] == 2` and a day stamp at `[field 0x28 in VILL]`, but it does not label the state numbers or the stamp as siege/bombardment.
+`[field 0x0 in VILL]` is an integer handle/id, read at the three sites above; the corpus does not label it "unique city id", but the accesses are consistent with an id used as a lookup key. The old `+0x04` parent `REGI` id, `+0x08` peace/contested/siege enumeration, `+0x28` "last bombardment", and `+0x34` mayor pointer are not supported. The code has a combat branch that tests `[field 0x8 in VILL] == 2` and a day stamp at `[field 0x28 in VILL]`, but it does not label the state numbers or the stamp as siege/bombardment.
 
 ### What the code does not establish
 
-- A city id at `[field 0x0 in VILL]`; no access to city offset 0 was found.
+- A "unique city id" label for `[field 0x0 in VILL]`; the field is used as a handle and lookup index, not labelled further.
 - A parent region id at `[field 0x4 in VILL]`; the field is used as a grid index.
 - The meanings "peace / contested / siege" for the three values of `[field 0x8 in VILL]`.
 - A mayor or governor `PERS` pointer in the city record.
@@ -102,70 +95,83 @@ The old `+0x00` city id, `+0x04` parent `REGI` id, `+0x08` peace/contested/siege
 
 ## 2. Regional GDP Calculation & National Factoring
 
-The section title is retained for continuity, but the corpus does not implement a bottom-up regional GDP sum. What it implements is a nation update that walks two different region chains and applies a 365-day smoother to two nation fields. The old production formula, the Leontief subtraction and the national raw-GDP sum are removed.
+The section title is retained for continuity, but the corpus does not implement a bottom-up regional GDP sum. `calc_nation` walks the `[field 0x2f0 in NATI]` region chain and calls `[fn 0x1c3ef40 f_1c3ef40]` on each region (the decompiler prints `param_1 + 0x5e` because `param_1` is `double *`, so 0x5e * 8 = 0x2f0); `f_1c3ef40` itself walks the same `[field 0x2f0 in NATI]` chain. The 365-day smoother is applied to two nation fields. The old production formula, the Leontief subtraction and the national raw-GDP sum are removed.
 
 ```mermaid
 flowchart LR
-    CN["calc_nation: NATI record"] -->|"field 0x5e: region id"| R1["REGI chain"]
-    CN -->|"field 0x2f0: region id"| R2["REGI chain"]
-    R1 -->|"f_1c3ef40"| F1["REGI field 0x10c"]
-    R2 -->|"f_22f02a0 on field 0x38"| F2["tagged value compare"]
+    CN["calc_nation: NATI record"] -->|"field 0x2f0: region id (printed as param_1 + 0x5e)"| R1["REGI chain"]
+    CN -->|"calls f_1c3ef40"| RF["f_1c3ef40 region update"]
+    RF -->|"field 0x2f0: region id"| R2["REGI chain"]
+    RF -->|"writes field 0x10c"| F1["REGI field 0x10c"]
     CN -->|"EMA 0.9972603 / 0.0027397275"| F3["NATI fields 0x64346c and 0xc868c"]
+    F14["f_141b2d0 (separate function)"] -->|"field 0x2f0: region id"| R3["REGI chain"]
+    F14 -->|"compares field 0x38"| F2["tagged value compare"]
 ```
 
 ```pseudocode
-// _geolgame__Cgps__calc_nation, corpus lines 2052660-2052667
-iVar5 = *(int *)(param_1 + 0x5e);
-while (iVar5 != 0) {
-    lVar21 = (longlong)iVar5 * 0x910;
-    f_1c3ef40((short *)param_1, lVar21 + REGI_BASE, fVar34);
-    iVar5 = *(int *)(lVar21 + REGI_BASE);
-}
+Function update_nation(nation):
+    if the nation is not active: return
+    region = nation.first_region_id
+    while region != 0:
+        update region from nation        // f_1c3ef40
+        region = region.next_region_id   // region field +0x00
 
-// same function, corpus lines 2052036-2052050
-fVar30 = *(float *)(param_1 + 0x64346c) - (...);
-fVar40 = clamp(fVar30, 0.0, 1.0);
-*(float *)(param_1 + 0x64346c) =
-    *(float *)(param_1 + 0x64346c) * 0.9972603 + fVar40 * 0.0027397275;
+    if the budget/score path is enabled:
+        score = lookup_score(nation)
 
-// same function, corpus lines 2052067-2052084
-fVar30 = (... ) + *(float *)(param_1 + 0xc868c);
-fVar40 = clamp(fVar30, 0.0, 1.0);
-*(float *)(param_1 + 0xc868c) =
-    *(float *)(param_1 + 0xc868c) * 0.9972603 + fVar40 * 0.0027397275;
+        // first smoothed index: EXCI (repo label; no corpus name)
+        target = nation.exci - ((score*10.0 - 2.0)*4.0)/100.0
+        target = clamp(target, 0.0, 1.0)
+        nation.exci = nation.exci*0.9972603 + target*0.0027397275   // constants 0x14134a0:2052049-2052050
+
+        // second smoothed index: no corpus name
+        candidate = ((score*10.0 - 5.0)*4.0)/100.0 + nation.control
+        if a condition is true and nation.control > candidate:
+            target = nation.control
+        else:
+            target = clamp(candidate, 0.0, 1.0)
+        nation.control = nation.control*0.9972603 + target*0.0027397275   // constants 0x14134a0:2052083-2052084
+
+Function update_regions_from_nation():   // f_1c3ef40
+    for each nation:
+        region = nation.first_region_id
+        while region != 0:
+            if the region's linked record is non-zero:
+                write the nation-derived value into the region
+            region = region.next_region_id
+
+Function refresh_tagged_region_values(value):   // f_141b2d0
+    for each nation:
+        region = nation.first_region_id
+        while region != 0:
+            if region's tagged +0x38 value matches value:
+                replace it with value
+            region = region.next_region_id
 ```
+> Evidence: calc_nation [fn 0x14134a0], corpus 2051819-2056518 (region walk 2052660-2069; EMA 2052036-2052050 and 2052065-2084); f_1c3ef40 [fn 0x1c3ef40], corpus 3298856-3298872 (the +0x2f0 walk); f_141b2d0 [fn 0x141b2d0], corpus 2056596-2056622 (the +0x2f0 walk with the +0x38 compare).
 
 ### 2.1 What `calc_nation` Walks
 
-`[fn 0x14134a0 _geolgame__Cgps__calc_nation]` starts with `nation_is_active(param_1)`. In its alternate branch it reads a region id from `[field 0x5e in NATI]` and walks the region chain (corpus lines 2052660-2052667), calling `[fn 0x1c3ef40 f_1c3ef40]` on each region.
+`[fn 0x14134a0 _geolgame__Cgps__calc_nation]` first checks whether the nation is active. In the `else` branch of the guard at corpus lines 2052585/2052659 (the guard compares `[global 0x4649165c i32]` with -3) it reads a region id from `[field 0x2f0 in NATI]` and walks that region chain (corpus lines 2052660-2069, including the loop-back at 2069), calling `[fn 0x1c3ef40 f_1c3ef40]` on each region. The decompiler prints `param_1 + 0x5e` because `param_1` is `double *`; 0x5e * 8 = 0x2f0.
 
-`f_1c3ef40` computes one region field from a nation field and a region field:
+`f_1c3ef40` computes `[field 0x10c in REGI] = [field 0xc4a8 in NATI] * [field 0x118 in REGI]` (corpus lines 3298434-3298436), then dispatches an event tagged `[tag 0x434c5545 "CLUE"]` (corpus line 3298465). It is region-level value propagation, not a sum of regional GDP into a national total. The raw statements are quoted in `08_CLAIMS.md` (raw region-update excerpt; see also 08-C018).
 
-```c
-uVar3 = f_22f1330((double *)(param_2 + 0x28), 0);
-*(float *)(param_2 + 0x10c) =
-    *(float *)((longlong)(int)uVar3 * 0x645310 + 0xc4a8 + NATI_BASE) *
-    *(float *)(param_2 + 0x118);
-```
+`f_1c3ef40` also walks the `[field 0x2f0 in NATI]` region chain at corpus line 3298864; this is the `+0x2f0` walk reachable from `calc_nation`. A different function, `[fn 0x141b2d0 f_141b2d0]`, walks every active nation's `[field 0x2f0 in NATI]` chain and compares the `[field 0x38 in REGI]` tagged value with `f_22f02a0` (corpus lines 2056596-2056622). Neither walk accumulates a GDP field.
 
-That is `[field 0x10c in REGI] = [field 0xc4a8 in NATI] * [field 0x118 in REGI]` (corpus lines 3298434-3298436), followed by an event dispatch with the tag `"CLUE"`. It is a region-level value propagation, not a sum of regional GDP into a national total.
-
-The same function later walks every nation and every region chain to compare the `+0x38` tagged value with `f_22f02a0` (corpus lines 2056596-2056622). This is the only nation-wide region walk in the function; it does not accumulate a GDP field.
-
-The old identification of `[field 0x30ce44 in NATI]` as NPIB is not supported. `[field 0x30ce44 in NATI]` is a float field (13 corpus hits), and `[fn 0x23e9640 f_23e9640]` uses it inside a formula `(fVar21 * 0.7) / 5000.0` (corpus line 4548009), but the corpus never labels it GDP, NPIB or PIB. The repo-derived `nation_fields.tsv` names `PIB1/PIB2/PIB3` at `[qty 0x5410 field-offset]`, `[qty 0x5414 field-offset]`, `[qty 0x5418 field-offset]` and `EPIB` at `[qty 0xc4a8 field-offset]`; the field `[field 0x30ce44 in NATI]` is not among them. That file is a derived map, not a shipped table, so it is only a lead, not proof.
+The old identification of `[field 0x30ce44 in NATI]` as NPIB is not supported. `[field 0x30ce44 in NATI]` is a float field (13 corpus hits), and `[fn 0x23e9640 f_23e9640]` uses it inside a `(value * 0.7) / 5000.0` formula (corpus line 4548009), but the corpus never labels it GDP, NPIB or PIB. The tag `[tag 0x43414c4a "CALJ"]` reads and writes it in `[fn 0x2593bd0 get_variable]` (corpus lines 4832529-4832534), which still does not establish GDP semantics. The repo-derived `nation_fields.tsv` names `PIB1/PIB2/PIB3` at `[field 0x5410 in NATI]`, `[field 0x5414 in NATI]`, `[field 0x5418 in NATI]` and `EPIB` at `[field 0xc4a8 in NATI]`; the field `[field 0x30ce44 in NATI]` is not among them. That file is a derived map, not a shipped table, so it is only a lead, not proof.
 
 ### 2.2 The 365-Day Smoother Is Real, but It Is Not GDP
 
 The exact constants exist twice in `[fn 0x14134a0 _geolgame__Cgps__calc_nation]`:
 
-- corpus line 2052049-2052050: `field_0x64346c = field_0x64346c * 0.9972603 + fVar40 * 0.0027397275`
-- corpus line 2052083-2052084: `field_0xc868c = field_0xc868c * 0.9972603 + fVar40 * 0.0027397275`
+- first smoothed index (corpus lines 2052036-2052050): `target = clamp(old - ((score*10.0 - 2.0)*4.0)/100.0, 0, 1)`; then `new = old*0.9972603 + target*0.0027397275`.
+- second smoothed index (corpus lines 2052065-2052084): `candidate = ((score*10.0 - 5.0)*4.0)/100.0 + old`; `target = clamp(candidate, 0, 1)` unless a condition holds and `old > candidate`, in which case `target = old`; then `new = old*0.9972603 + target*0.0027397275`.
 
-The two coefficients sum to 1.0000000275, and `0.0027397275` is the f32-rounded `1/365`; so the form is a 365-day exponential smoother. But the smoothed object is `[field 0x64346c in NATI]` / `[field 0xc868c in NATI]`, each clamped to `[0,1]` before the blend. `[fn 0xa5f510 f_a5f510]` reads `[field 0x64346c in NATI]` only to choose between a fallback constant and an `LCPE` value (corpus line 366826), and `[fn 0x1d9cbd0 f_1d9cbd0]` aggregates it across active nations as `* 100.0` for a UI/variable read (corpus line 3498469). Neither function treats it as GDP. The old "GDP EMA" claim is therefore replaced by: a 365-day EMA exists, but its target is an unlabeled unit-interval index, not national GDP.
+The two coefficients sum to 1.0000000275, and `0.0027397275` is the source's decimal approximation of `1/365` (1/365 = 0.0027397260...); so the form is a 365-day exponential smoother. But the smoothed object is `[field 0x64346c in NATI]` / `[field 0xc868c in NATI]`, each clamped to `[0,1]` before the blend. `[fn 0xa5f510 f_a5f510]` reads `[field 0x64346c in NATI]` only to choose between a fallback constant and an `LCPE` value (corpus line 366826), and `[fn 0x1d9cbd0 f_1d9cbd0]` aggregates it across active nations as `* 100.0` for a UI/variable read (corpus line 3498469). Neither function treats it as GDP. The old "GDP EMA" claim is therefore replaced by: a 365-day EMA exists, but its target is a unit-interval index with no corpus name (the repo-derived `nation_fields.tsv` labels it EXCI), not national GDP.
 
 ### 2.3 Tax Retention and Equalisation
 
-No retention ratio in `[0.10, 0.70]` was found. `[fn 0x1c904b0 init_taxe]` iterates nations and regions (corpus lines 3319355-3319410) and builds tax relationships, but it contains no clamp of a regional tax ratio to that range. The searches were: every function containing both a `0x910` region index and the literals `0.1` and `0.7`; no function contains a two-sided clamp on a tax share. Equalisation transfers likewise have no implementing function: no function takes a region surplus and adds it to another region or to a national pool.
+No retention ratio in `[0.10, 0.70]` was found. `[fn 0x1c904b0 init_taxe]` iterates nations and regions (corpus lines 3319355-3319410) and builds tax relationships, but it contains no clamp of a regional tax ratio to that range. The searches were: every function containing both a `[qty 0x910 stride]` region index and the literals `0.1` and `0.7`; no function contains a two-sided clamp on a tax share. Equalisation transfers likewise have no implementing function: no function takes a region surplus and adds it to another region or to a national pool.
 
 ### What the code does not establish
 
@@ -182,7 +188,7 @@ No retention ratio in `[0.10, 0.70]` was found. `[fn 0x1c904b0 init_taxe]` itera
 
 ## 3. Territorial Annexation & Secession Dynamics
 
-The action ids in this area are data-table rows, and four of them are also code literals. The corpus does not show the pointer rewrite the old text described at `[field 0x28 in REGI]`. It does show list-traversal code, a list-unlink function, and an action handler that writes the `+0x38` tagged value.
+The action ids in this area are data-table rows, and four of them are also code literals. The corpus does not show the pointer rewrite the old text described at `[field 0x28 in REGI]`. It does show list-traversal code, a list-unlink function, and an action handler that writes the `[field 0x38 in REGI]` tagged value.
 
 ```mermaid
 flowchart TD
@@ -192,33 +198,38 @@ flowchart TD
     D["332046 Indépendance"] -->|"0x5110e"| E
     H -->|"NATI field 0x2f0"| R["REGI chain"]
     H -->|"f_1992f10"| T["REGI field 0x38 tagged value"]
-    E -->|"f_1c01830"| L["NATI field 0x2f0 / REGI field 0x0"]
 ```
 
 ```pseudocode
-// f_19931a0, corpus lines 2804356 and 2804416-2804428 (action 0x510ff)
-if ((int)*(float *)(param_1 + 200 + lVar28 * 4) == 0x510ff) {
-    for (nation = 1; nation < nation_count; nation++) {
-        if (nation_is_active(NATI_BASE + nation * 0x645310)) {
-            for (r = *(short *)(NATI_BASE + nation * 0x645310 + 0x2f0);
-                 0 < r;
-                 r = *(int *)(REGI_BASE + r * 0x910)) {
-                if (f_18f06d0((double *)(REGI_BASE + r * 0x910 + 0x38)))
-                    f_1992f10(REGI_BASE + r * 0x910, value);
-            }
-        }
-    }
-}
+When the action id is 332031 (Frontières modifiées):
+    for each first nation A (index 1..nation_count):
+        if A fails f_1a439e0 and its flag bit 2 is not set: continue
+        for each second nation B (index 1..nation_count):
+            if B fails f_1a43aa0 and its flag bit 2 is not set: continue
+            if the ordered-pair gate f_1cd5100(A, B) is false: continue
 
-// f_1992f10, corpus lines 2803962-2803963 and 2804025-2804028
-uVar12 = (ulonglong)(int)*(double *)(param_1 + 0x38);
-piVar13 = (int *)(uVar12 * 0xb88 + COMPANY_BASE);
-/* ... company work ... */
-if (0 < *(int *)(param_1 + 4)) {
-    *(undefined8 *)(param_1 + 0x38) = *(undefined8 *)param_2;
-    *(undefined8 *)(param_1 + 0x40) = *(undefined8 *)(param_2 + 2);
-}
+            if A.code_value == 0x5541 and B.code_value == 0x5255:
+                for each region in A's +0x2f0 list (source adds 0x2dc to the +0x14 pointer):
+                    if the region's +0x38 tagged value passes f_18f06d0:
+                        apply f_1992f10 to the region
+
+            if B.code_value == 0x5541 and A.code_value == 0x5255:
+                for each region in B's +0x2f0 list:
+                    if the region's +0x38 tagged value passes f_18f06d0:
+                        apply f_1992f10 to the region
+
+When the action id is 332032 (Annexion de certains territoires occupés):
+    conflict = the conflict record selected by the acting nation
+    apply f_1992f10 to each selected region
+
+When f_1992f10(region) runs:
+    company_index = integer part of the region's +0x38 tagged value
+    for each company record in that slot:
+        update the company fields
+    if the region's +0x4 counter is positive:
+        the region's +0x38 tagged value = the supplied value
 ```
+> Evidence: f_19931a0 [fn 0x19931a0], corpus 2804356-2804432 (ordered pair loop 2804399-2804428; f_1cd5100 gate 2804396; A's +0x2f0 list via 0x2dc at 2804400; B's direct +0x2f0 load at 2804416; code values 0x5541/0x5255); f_1992f10 [fn 0x1992f10], corpus 2803962-2803963 and 2804025-2804028.
 
 ### 3.1 Action IDs: Data Rows and Code Literals
 
@@ -235,17 +246,17 @@ The `506900` row is not a code constant. Treating the id as a `*506900` base plu
 
 ### 3.2 What the Annexation Handler Actually Does
 
-`[fn 0x19931a0 f_19931a0]` handles `[qty 0x510ff action-id]` by walking every active nation's `[field 0x2f0 in NATI]` region chain and calling `[fn 0x1992f10 f_1992f10]` for regions whose `[field 0x38 in REGI]` passes `f_18f06d0` (corpus lines 2804416-2804428). The `[qty 0x51100 action-id]` branch reads a conflict record at `param_1 + 0x428` (stride `0x6cb8`) and calls the same function (corpus lines 2804443-2804462). The `[qty 0x51108 action-id]` branch in `exec_contrat` only formats a notification string, `" est intégré par "` (corpus line 2802237).
+`[fn 0x19931a0 f_19931a0]` handles `[qty 0x510ff action-id]` with an ordered nation-pair loop: outer nation A, inner nation B, gated by `[fn 0x1cd5100 f_1cd5100]` and by the code values `[qty 0x5541 code-value]` / `[qty 0x5255 code-value]` (corpus lines 2804399-2804428). When A carries `[qty 0x5541 code-value]` and B carries `[qty 0x5255 code-value]` it walks A's `[field 0x2f0 in NATI]` region list (A's load at 2804400 is from the +0x14 pointer plus 0x2dc); when B carries `[qty 0x5541 code-value]` and A carries `[qty 0x5255 code-value]` it walks B's `[field 0x2f0 in NATI]` region list (B's direct +0x2f0 load is at 2804416). It calls `[fn 0x1992f10 f_1992f10]` for regions whose `[field 0x38 in REGI]` passes `f_18f06d0`. The `[qty 0x51100 action-id]` branch reads a conflict record at `[field 0x428 in NATI]` (stride `[qty 0x6cb8 conflict-stride]`) and calls the same function (corpus lines 2804443-2804462). The `[qty 0x51108 action-id]` branch begins with a formatted notification, `" est intégré par "` (corpus lines 2802237-2250), then performs nine state updates: two `f_18e9ed0` calls, two `f_1a3a8d0` checks, `f_1d12bb0`, two `f_22c1dc0` flag ORs, `f_22c28f0` and `f_22c3110` (corpus lines 2802237-2475).
 
-`f_1992f10` writes the `+0x38` tagged value at corpus lines 2804025-2804028 and operates on `[global 0x5d859dc8 i64]` records of stride `0xb88`. No write to `[field 0x28 in REGI]` or `[field 0x14 in REGI]` occurs in the cited ranges of either action handler. The list-unlink code `[fn 0x1c01830 f_1c01830]` exists and rewrites `[field 0x2f0 in NATI]` / `[field 0x0 in REGI]` (corpus lines 3265819-3265832), but the `332031` / `332032` / `332040` handlers do not call it in the cited range.
+`f_1992f10` writes the `[field 0x38 in REGI]` tagged value at corpus lines 2804025-2804028 and operates on `[global 0x5d859dc8 i64]` records of stride `[qty 0xb88 stride]`. No write to `[field 0x28 in REGI]` or `[field 0x14 in REGI]` occurs in the cited ranges of either action handler. The list-unlink code `[fn 0x1c01830 f_1c01830]` exists and rewrites `[field 0x2f0 in NATI]` / `[field 0x0 in REGI]` (corpus lines 3265819-3265832), but its only call sites are corpus lines 3259833 (inside `[fn 0x1bf6220 f_1bf6220]`) and 3262957 (inside `[fn 0x1bfbe30 f_1bfbe30]`), not `exec_contrat` or `set_action_sp2`.
 
-The old line `*(int16_t *)(region_ptr + 0x28) = annexing_nation_id;` is therefore removed. The `+0x28` value is a 16-byte tagged value, and the observed action-handler write is to `+0x38`, not `+0x28`.
+The old line `*(int16_t *)(region_ptr + 0x28) = annexing_nation_id;` is therefore removed. The `[field 0x28 in REGI]` value is a 16-byte tagged value, and the observed action-handler write is to `[field 0x38 in REGI]`, not `[field 0x28 in REGI]`.
 
 ### 3.3 Secession
 
-The secession rows exist: `[data xan.gt.tsv "102104"]`, `[data xan.gt.tsv "506900"]`, `[data xan.gt.tsv "332046"]`. The code literals `[qty 0x18ed8 action-id]` and `[qty 0x5110e action-id]` appear in branch conditions (corpus line 2319450 and line 2803456). The list-detach operation is available as `[fn 0x1c01830 f_1c01830]`, and a dormant nation slot becomes active when `[fn 0x1c30ef0 f_1c30ef0]` stores a region id into `[field 0x2f0 in NATI]` (corpus lines 3290386-3290390).
+The secession rows exist: `[data xan.gt.tsv "102104"]`, `[data xan.gt.tsv "506900"]`, `[data xan.gt.tsv "332046"]`. The code literals `[qty 0x18ed8 action-id]` and `[qty 0x5110e action-id]` appear in branch conditions (corpus line 2319450 and line 2803456). The list-unlink function `[fn 0x1c01830 f_1c01830]` exists, but no call from the secession paths is visible. A dormant nation slot becomes active when `[fn 0x1c30ef0 f_1c30ef0]` stores a region id into `[field 0x2f0 in NATI]` (corpus lines 3290386-3290390).
 
-The corpus does not implement the debt partition or the garrison defection described in the old text. Searches for a loan record (`0xec`-stride) multiplied by a region-GDP ratio returned no such expression, and no unit-record write was found tied to a seceding region. Those claims are removed.
+The corpus does not implement the debt partition or the garrison defection described in the old text. Searches for a loan record (`[qty 0xec stride]`) multiplied by a region-GDP ratio returned no such expression, and no unit-record write was found tied to a seceding region. Those claims are removed.
 
 ### 3.4 The Two R1-Flagged Lines
 
@@ -292,31 +303,29 @@ flowchart TD
 ```
 
 ```pseudocode
-// Cdatabase__es_base, corpus lines 2074177 and 2074187
-f_1394770(param_1, (void *)G_3e45cc50, 64000, ...);  // CHMN, stride 0x98
-f_1394930(param_1, (void *)G_3ee2c7d0, 64000, ...);  // CHNO, stride 0x260
+Load the transport network:
+    read 64,000 CHMN records, each 0x98 bytes
+    read 64,000 CHNO records, each 0x260 bytes
+    read 2,000 TUNN records, each 0x30 bytes, tagged "TUNN"
+    read 3,000 PONT records, each 0x30 bytes, tagged "PONT"
 
-// Cdatabase__es_base, corpus lines 2074904-2074941
-for (lVar72 = 2000; lVar72 != 0; lVar72--) {
-    f_14a8a60(tunnel_rec, 3, p2, ...);
-    tunnel_rec += 0x30;
-}
-for (lVar25 = 3000; lVar25 != 0; lVar25--) {
-    f_1499950(bridge_rec, 3, p2, ...);
-    bridge_rec += 0x30;
-}
+For each PONT or TUNN record:
+    read its tag
+    read a 0x30 size word
+    read the 0x30-byte payload
 ```
+> Evidence: Cdatabase__es_base [fn 0x143acd0], corpus 2074177 and 2074187 (CHMN/CHNO counts) and 2074904-2074941 (TUNN/PONT loops); f_1394770 [fn 0x1394770] line 1988353 (CHMN stride 0x98); f_1394930 [fn 0x1394930] line 1988428 (CHNO stride 0x260); f_1499950 [fn 0x1499950] lines 2128493-2128497 (PONT tag/size); f_14a8a60 [fn 0x14a8a60] lines 2137169-2137173 (TUNN tag/size).
 
 ### 4.1 Transportation Pools
 
 | Pool | Stride | Count and loader evidence | Record tag |
 | :--- | :--- | :--- | :--- |
-| CHMN | `[qty 0x98 stride]` | `[qty 64000 chmn-records]` at corpus line 2074177; `[fn 0x1394770 f_1394770]` advances by `0x98` (line 1988353) | none observed |
-| CHNO | `[qty 0x260 stride]` | `[qty 64000 chno-records]` at corpus line 2074187; `[fn 0x1394930 f_1394930]` advances by `0x260` (line 1988428) | none observed |
+| CHMN | `[qty 0x98 stride]` | `[qty 64000 chmn-records]` at corpus line 2074177; `[fn 0x1394770 f_1394770]` advances by `[qty 0x98 stride]` (line 1988353) | none observed |
+| CHNO | `[qty 0x260 stride]` | `[qty 64000 chno-records]` at corpus line 2074187; `[fn 0x1394930 f_1394930]` advances by `[qty 0x260 stride]` (line 1988428) | none observed |
 | PONT | `[qty 0x30 record-size]` | `[qty 3000 bridge-records]` at corpus lines 2074938-2074941 | `[tag 0x504f4e54 "PONT"]` in `[fn 0x1499950 f_1499950]` line 2128495 |
 | TUNN | `[qty 0x30 record-size]` | `[qty 2000 tunnel-records]` at corpus lines 2074904-2074907 | `[tag 0x54554e4e "TUNN"]` in `[fn 0x14a8a60 f_14a8a60]` line 2137171 |
 
-PONT and TUNN are serialized as a tag, a size word `0x30` and a 0x30-byte payload (corpus lines 2128493-2128497 and 2137169-2137173). The corpus does not expose lane capacity, electrification, terrain resistance or a pathfinding graph over these records.
+PONT and TUNN are serialized as a tag, a size word `[qty 0x30 record-size]` and a `[qty 0x30 record-size]`-byte payload (corpus lines 2128493-2128497 and 2137169-2137173). The corpus does not expose lane capacity, electrification, terrain resistance or a pathfinding graph over these records.
 
 ### 4.2 Energy Action Rows
 
@@ -353,7 +362,7 @@ The three base rows match Volume 3 and are action ids as well as data rows:
 - `[data xan.gt.tsv "330097"]` — `Bases navales`; code literal `[qty 0x50971 action-id]` (lines 5342043 and 5346962).
 - `[data xan.gt.tsv "330098"]` — `Bases aériennes`; code literal `[qty 0x50972 action-id]` (lines 5342048 and 5347075).
 
-Those branches toggle bits in `_DAT_464de228` (`^ 0x10000000000`, `^ 0x20000000000`, and the next bit). They are menu/selection state, not base-capacity or construction mechanics. Volume 3 already records that the `xan.gt.tsv` rows have an empty construction-duration cell.
+Those branches toggle bits in `[global 0x464de228 u64]` (XOR with 0x10000000000, 0x20000000000, and the next bit). They are menu/selection state, not base-capacity or construction mechanics. Volume 3 already records that the `xan.gt.tsv` rows have an empty construction-duration cell.
 
 ### What the code does not establish
 

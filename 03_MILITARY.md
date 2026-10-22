@@ -4,58 +4,28 @@ This volume is re-derived against the corpus of record, `recomp/full_fns.clean.c
 
 ## 1. The Unit Pool (`UNIT`): 120,000 records at a 1,872-byte stride
 
-The serializer writes both the record tag and the stride into its own header:
+The serializer stamps both the record tag and the stride into its own header: stride `[qty 0x750 stride]` at corpus line 2137771 and tag `[tag 0x554e4954 "UNIT"]` at line 2137772 `[fn 0x14a96e0 f_14a96e0]`.
 
-```c
-// f_14a96e0, corpus lines 2137772-2137773
-uStack_68 = 0x554e4954/*'UNIT'*/;
-uStack_64 = 0x750;
-```
+The array inventory records the pool as 224,640,000 bytes, record size `[qty 0x750 stride]`, count 120,000, holder `G_61d0deb0`, loader `f_139d230`, serializer `f_14a96e0`, 759 users (`array_inventory.tsv`, row 350). That is 120,000 records at that stride. The loader is `[fn 0x139d230 f_139d230]`, and `Cdatabase__es_base` calls it with the literal record count at corpus line 2075010 `[fn 0x143acd0 Cdatabase__es_base]`:
 
-The tag resolves as `[tag 0x554e4954 "UNIT"]` and the serializer as `[fn 0x14a96e0 f_14a96e0]`; the record stride is `[qty 0x750 stride]`.
+The call passes the literal 120000, so 120000 is the loader's record count, i.e. the UNIT array length. In mode 1 the loader walks that many records and advances by the stride; in mode 5 it reads `count * 0x750` bytes at once (lines 1994107-1994117).
 
-The array inventory records the pool as 224,640,000 bytes, record size `[qty 0x750 stride]`, count 120,000, holder `G_61d0deb0`, loader `f_139d230`, serializer `f_14a96e0`, 759 users (`array_inventory.tsv`, row 350). That is 120,000 records at that stride. The loader is `[fn 0x139d230 f_139d230]`.
-
-The loader proves the multiplication rather than merely the constant. In mode 1 it walks `count` records and advances the cursor by the stride; in mode 5 it reads `count` times the stride in one call:
-
-```c
-// f_139d230, corpus lines 1994107-1994117
-while (uVar3 != 0) {
-    iVar1 = f_14a96e0(param_2, 1, param_4, param_5);
-    uVar2 = uVar2 + iVar1;
-    param_2 = (void *)((longlong)param_2 + 0x750);   // line 1994109
-    uVar3 = uVar3 - 1;
-}
-...
-uVar3 = io_read(param_2, param_3 * 0x750);            // line 1994117
-```
-
-`calc_unites` indexes the same array by multiplying the record index by the same stride `[fn 0x24c5200 calc_unites]` `[qty 0x750 stride]`.
-
-The 120,000 count is real, but the old citation `0x1d4c0` is not. Refuted token: `0x1d4c0` has zero literal hits in the corpus and `cite.py` classifies it unresolved. The code expresses the limit as the last index 119999 and as a `120000.0` validity bound, for example `iVar12 - 1U < 119999` in the war-score walk `[fn 0x1329770 f_1329770]`. The count therefore comes from the array inventory and the loader, not from a 120000 array-size literal.
+The old citation `0x1d4c0` is only a hex spelling: it has zero literal hits because the call uses decimal 120000. This is a spelling issue, not a count issue. Keep the separate last-index guard of 119999 at `f_1329770` line 1970256 distinct: it is an index-sanitisation check on a linked-list walk, not the pool size `[fn 0x1329770 f_1329770]`. The `120000.0` value that appears in map-coordinate code has no unit-pool context and is not used here.
 
 ### 1.1 Record organisation and verified offsets
 
-The pool is an intrusive linked list over a sentinel element at index 0. The head lives at `base+4` and each record's `+4` is the next index:
+The pool is an intrusive linked list over a sentinel element at index 0. The head lives at `base+4` (`[field 0x4 in UNIT]`) and each record's `+4` is the next index `[fn 0x24c5200 calc_unites]`. A second list uses `+8` as its next link `[field 0x8 in UNIT]`.
 
-```c
-// calc_unites, corpus lines 4703763-4703768
-iVar16 = _DAT_61d0deb4;                               // head, base+4
-while (0 < iVar16) {
-    lVar17 = (longlong)iVar16 * 0x750;
-    iVar16 = *(int *)(&DAT_61d0deb4 + lVar17);        // next at +4
-    ...
-}
-```
-
-`_DAT_61d0deb4` resolves as `[global 0x61d0deb4 i32]`. A second list uses `+8` as its next link (`iVar16 = *(int *)(lVar17 + G_61d0deb8)`, line 4704120) `[field 0x8 in UNIT]`.
-
-Only the following offsets are supported by an expression that indexes a `0x750` record. Nothing else in the old field map is.
+The following offsets are each supported by a read or write in the cited function. The list is not claimed to be exhaustive.
 
 | offset | width | expression read | citation |
 | :--- | :--- | :--- | :--- |
 | `+0x4` | i32 | list head / next index | `[field 0x4 in UNIT]` `[fn 0x24c5200]` |
 | `+0x8` | i32 | second next index | `[field 0x8 in UNIT]` `[fn 0x24c5200]` |
+| `+0x3e` | i16 | short read in the same 0x750 walk | `[field 0x3e in UNIT]` `[fn 0x1327960]` |
+| `+0x58` | f64 | double read in the same 0x750 walk | `[field 0x58 in UNIT]` `[fn 0x1327960]` |
+| `+0x78` | f64 | first half of a 16-byte pair | `[field 0x78 in UNIT]` `[fn 0x24b0890]` |
+| `+0x80` | f64 | second half of the same 16-byte pair | `[field 0x80 in UNIT]` `[fn 0x24b0890]` |
 | `+0x88` | u64 | flag word, bit tests | `[field 0x88 in UNIT]` `[fn 0x24c5200]` |
 | `+0xa0` | u32 | flag word; bits 12 and 13 select the update path | `[field 0xa0 in UNIT]` `[fn 0x24c5200]` |
 | `+0xb0` | u32 | type word returned by `f_24fc7d0` | `[field 0xb0 in UNIT]` `[fn 0x24fc7d0]` |
@@ -64,72 +34,63 @@ Only the following offsets are supported by an expression that indexes a `0x750`
 | `+0xc8` | f32 | per-type stat copied from source `+0xc` | `[field 0xc8 in UNIT]` `[fn 0x24a5040]` |
 | `+0xec` | i32 | count multiplied into the war-score strength | `[field 0xec in UNIT]` `[fn 0x1329770]` |
 
-The type word is read by a three-instruction function:
+The added rows are cited to exact reads: `+0x3e` is a short read at base+0x3e in `f_1327960` (for example line 1969198); `+0x58` is a double read at base+0x58 in `f_1327960` line 1969432; `+0x78`/`+0x80` is a 16-byte pair read at `f_24b0890` lines 4692737-4692738 whose semantic name is not read.
 
-```c
-// f_24fc7d0, corpus line 4741481
-ulonglong f_24fc7d0(longlong param_1)
-{
-  return (ulonglong)*(uint *)(param_1 + 0xb0);
-}
-```
+The type word is read by a tiny accessor: `f_24fc7d0` returns the 32-bit word at record `+0xb0` (line 4741481) `[fn 0x24fc7d0 f_24fc7d0]`. `calc_unites` treats `[qty 0x20790]` as the empty kind and calls the removal routine `f_24d1580` on records whose `+0xbc` word equals it (lines 4703768-4703770) `[fn 0x24c5200]`.
 
-`calc_unites` treats `[qty 0x20790]` as the dead/empty kind: in the first pass it calls the removal routine `f_24d1580` only when the `+0xbc` word equals that sentinel (corpus lines 4703768-4703770) `[fn 0x24c5200]`.
+The old map is wrong at the points tested: old `+0x08 pos_x` is the next-link index (`[field 0x8 in UNIT]`); old `+0x06 archetype_id` is not the type word, which is `+0xb0` (`[field 0xb0 in UNIT]`); and old `+0x18 hp_current` through `+0x2c ammo_current` have no field access in `calc_unites`. The old `+0x58` label `cargo_unit_head` is also not established, although `+0x58` does occur as a double in `f_1327960` line 1969432 `[field 0x58 in UNIT]`.
 
-The old struct map is refuted at three concrete points. Old `+0x08 pos_x` is the next-link index in the code (`[field 0x8 in UNIT]`). Old `+0x06 archetype_id` is not the type word: the type word is `+0xb0` (`[field 0xb0 in UNIT]`). Old `+0x18 hp_current`, `+0x1c hp_max`, `+0x20 morale`, `+0x28 fuel_current`, `+0x2c ammo_current` have no field access in `calc_unites`; the offsets that do appear there are `+0x88`, `+0xa0`, `+0xbc`, `+0xc4`, `+0xc8`, `+0xec`, `+0x1b8` and `+0x1e0`.
+The fields the table describes are the ones this volume uses. The two stats at `+0xc4`/`+0xc8` are read in `f_24a5040` lines 4688111/4688113 and `f_1329770` lines 1970246-1970247, not in `calc_unites` `[fn 0x24a5040]` `[fn 0x1329770]`.
 
 ### 1.2 Logic graph
 
 ```mermaid
 flowchart TD
-    A["array_inventory: 120000 x 0x750 = 224640000 bytes"] --> B["loader f_139d230"]
-    B -->|"mode 1: count times, +0x750"| C["f_14a96e0 per record"]
-    B -->|"mode 5: io_read(count * 0x750)"| D["serialized blob"]
-    E["calc_unites f_24c5200"] --> F["head = global 0x61d0deb4 (base+4)"]
-    F --> G{"head > 0 ?"}
-    G -->|yes| H["rec = head * 0x750"]
-    H --> I["next = *(i32 *)(base + 4 + rec)"]
-    I --> J{"*(i32 *)(rec + 0xbc) == 0x20790 ?"}
-    J -->|yes| K["f_24d1580(rec): remove empty record"]
-    J -->|no| L["dispatch to f_24b06e0 / f_24b4580"]
-    K --> G
-    L --> G
+    A["120,000 records, 1,872 bytes each"] --> B["loader reads count times the stride"]
+    B --> C["serializer stamps tag and stride"]
+    D["daily unit pass"] --> E["start at the pool head"]
+    E --> F{"index positive?"}
+    F -->|no| G["done"]
+    F -->|yes| H["take the unit record and save its next index"]
+    H --> I{"unit kind is the empty kind?"}
+    I -->|yes| J["remove the empty record"]
+    I -->|no| K["process the unit"]
+    J --> F
+    K --> F
 ```
 
-### 1.3 Pseudocode transcribed from `calc_unites` and `f_139d230`
+### 1.3 Pseudocode: loading and walking the unit pool
 
 ```pseudocode
-// f_139d230 (loader), corpus 1994093-1994117
-function load(mode, buf, count, ...):
-    if mode == 1:
-        n = 0
-        while count > 0:
-            n += f_14a96e0(buf, 1, ...)      // serializer, body not read in full
-            buf += 0x750                     // corpus 1994109
-            count -= 1
-        return n
-    if mode == 5:
-        return io_read(buf, count * 0x750)   // corpus 1994117
-    // modes 2,3,4,6: (not read)
+Goal: load the unit pool and walk it as a linked list.
 
-// calc_unites, corpus 4703763-4703976
-base = G_61d0deb0
-head = *(i32 *)(base + 0x4)                  // global 0x61d0deb4
-while head > 0:
-    rec  = head * 0x750                      // corpus 4703766 / 4703911
-    next = *(i32 *)(base + 0x4 + rec)        // corpus 4703766-4703768
-    kind = *(i32 *)(base + 0xbc + rec)       // field 0xbc
-    if kind == 0x20790:
-        f_24d1580(base + rec, NULL, ...)     // corpus 4703770
-    head = next
-// second pass: per-nation list head at NATI+0x3b44, next at +0x8 (corpus 4704114-4704132)
+record_stride = 0x750            // 1,872 bytes per unit, f_14a96e0:2137771
+record_tag = "UNIT"              // f_14a96e0:2137772
+
+function load_units(buffer, count):
+    if the caller reads one record at a time:
+        for each of count records:
+            read one record into buffer
+            buffer = buffer + record_stride
+    else if the caller reads the whole block:
+        read count * record_stride bytes
+
+function walk_units():
+    next_index = pool.head                 // stored at pool base + 4
+    while next_index > 0:
+        unit = pool[next_index]
+        following = unit.next_index        // stored at unit + 4
+        if unit.kind == empty_kind:        // empty_kind = 0x20790, f_24c5200:4703768
+            remove unit
+        next_index = following
+> Evidence: f_139d230 [fn 0x139d230], corpus 1994093-1994117; calc_unites [fn 0x24c5200], corpus 4703763-4703976. `0x750` is the stride, `0x20790` the empty kind, `+4` the list-link offset.
 ```
 
 ### 1.4 What the code does not establish
 
-- No position, heading, hit-point, morale, fuel or ammunition field is proved. The old `+0x00..+0x58` layout is not the record layout `[fn 0x24c5200]` `[field 0x8 in UNIT]`.
-- No explicit allocation expression containing 120,000. The count is inventory metadata plus the loader's count-times-stride read `[qty 0x750 stride]` `[fn 0x139d230]`.
-- No 100x100 spatial grid. Section 4 records the searches `[fn 0x24c5200]`.
+- No position, heading, hit-point, morale, fuel or ammunition field is proved. The old `+0x00..+0x58` table is not usable as a struct map: `+0x06`/`+0x08`/`+0x18..+0x2c` do not match, and `+0x58` is a double, not the claimed list head `[fn 0x24c5200]` `[field 0x8 in UNIT]`.
+- The explicit count is the literal 120000 in the `Cdatabase__es_base` call at line 2075010; the loader multiplies it by the stride `[qty 0x750 stride]` `[fn 0x139d230]` `[fn 0x143acd0]`.
+- No 100x100 spatial grid in `calc_unites`. Section 4 records the searches `[fn 0x24c5200]`.
 - `G_61d0deb0` is the static holder; the war code reaches records through `[global 0x31ed6c90 i64]` with the same stride. Whether these are one runtime instance or two is not established.
 
 ## 2. Unit Archetypes Are a Data Table, Not an Engine Formula (`xue.gt.tsv`)
@@ -152,170 +113,128 @@ Each row is cited as `[data xue.gt.tsv "<row name>"]`. The old table's dollar pr
 
 The table declares no unit for `Vitesse`, `Rayon`, `Prix` or `Distance d'attaque`. The old labels "km/h", "km", "Unlimited" and "$" are therefore removed. `Distance d'attaque` is 2.0000 for every row quoted above, not a per-archetype engagement range.
 
-The engine does copy two per-type integers into the unit record, but the source record is not proved to be the `xue.gt.tsv` row:
+The engine does copy two per-type integers into the unit record, but the source record is not proved to be the `xue.gt.tsv` row: `f_24a5040` calls `f_24f4f80` twice and copies source `+8` into unit `+0xc4`, then source `+0xc` into unit `+0xc8` (lines 4688110-4688113) `[fn 0x24a5040 f_24a5040]`. `f_24f4f80` was not read, so the mapping from `Attaque`/`Defense` (or any other column) is `(not read)`.
 
-```c
-// f_24a5040, corpus lines 4688109-4688113
-*(undefined4 *)(lVar23 + G_61d0df74) = *(undefined4 *)(lVar12 + 8);   // unit +0xc4
-*(float *)(lVar23 + G_61d0df78) = (float)*(int *)(lVar12 + 0xc);      // unit +0xc8
-```
-
-`lVar12` comes from `f_24f4f80(unit)`; that function was not read, so the mapping from `Attaque`/`Defense` (or any other column) to source `+8`/`+0xc` is `(not read)`. The unit record's `+0xb0` word is also not the table's `Type d'unite`: the code compares `+0xb0` against composite values such as `[qty 0x2021033 composite-id]`, `[qty 0x2021036 composite-id]`, `[qty 0x2081039 composite-id]` and `[qty 0x20790]` (for example in `calc_programmes_spatiaux`, corpus lines 76250-76256), none of which equals the small integers 125, 135, 164 or 219 `[field 0xb0 in UNIT]` `[fn 0x8939f0 calc_programmes_spatiaux]`.
+The unit record's `+0xb0` word is also not the table's `Type d'unite`: the code compares `+0xb0` against composite values such as `[qty 0x2021033 composite-id]`, `[qty 0x2021036 composite-id]`, `[qty 0x2081039 composite-id]` and `[qty 0x20790]` (for example in `calc_programmes_spatiaux`, corpus lines 76250-76256), none of which equals the small integers 125, 135, 164 or 219 `[field 0xb0 in UNIT]` `[fn 0x8939f0 calc_programmes_spatiaux]`.
 
 ### 2.1 Logic graph
 
 ```mermaid
 flowchart LR
-    T["xue.gt.tsv: 1048 data rows"] -->|"Type d'unite, Attaque, Defense, Prix, ..."| U["row lookup (not read)"]
-    U -->|"mapping not established"| P["per-type record returned by f_24f4f80 (not read)"]
-    P -->|"source +8 -> unit +0xc4"| A["unit field +0xc4 (f32)"]
-    P -->|"source +0xc -> unit +0xc8"| B["unit field +0xc8 (f32)"]
-    R["unit +0xb0 composite type word"] -->|"compared with 0x2021033 / 0x20790"| Q{"recognised kind?"}
-    Q -->|"no mapping to Type d'unite"| X["not established"]
+    T["xue.gt.tsv: 1048 data rows"] --> U["row lookup"]
+    U --> P["per-type record, shape not read"]
+    P --> A["unit stat at +0xc4"]
+    P --> B["unit stat at +0xc8"]
+    R["unit type word at +0xb0"] --> Q{"recognised composite kind?"}
+    Q -->|no mapping read| X["not established"]
 ```
 
-### 2.2 Pseudocode transcribed from `f_24fc7d0` and `f_24a5040`
+### 2.2 Pseudocode: copying type stats into a live unit
 
 ```pseudocode
-// f_24fc7d0, corpus 4741481
-function get_type_word(rec):
-    return *(u32 *)(rec + 0xb0)              // field 0xb0
+Goal: copy two stats from a unit-type record into a live unit.
 
-// f_24a5040, corpus 4688109-4688113
-function copy_per_type_stats(unit, src):     // src = f_24f4f80(unit), body not read
-    *(u32  *)(unit + 0xc4) = *(u32 *)(src + 8)
-    *(f32  *)(unit + 0xc8) = (f32)*(i32 *)(src + 0xc)
+function copy_type_stats(unit):
+    if unit.value_at_0x58 < 0.0:              // guard at +0x58, f_24a5040:4688109
+        type_record = look_up_type_record(unit)   // f_24f4f80, body not read
+        unit.stat_a = type_record.value_at_8      // source +8, f_24a5040:4688111
+        unit.stat_b = type_record.value_at_12     // source +0xc, f_24a5040:4688113
 
-// observed comparison, calc_programmes_spatiaux, corpus 76250-76256
-kind = get_type_word(unit)
-if kind == 0x2021033 or kind == 0x2021036 or kind == 0x2081039:
-    ...                                      // branch body (not read)
+function read_type_word(unit):
+    return unit.word_at_0xb0                  // f_24fc7d0:4741481
+> Evidence: f_24a5040 [fn 0x24a5040], corpus 4688109-4688113; f_24fc7d0 [fn 0x24fc7d0], corpus 4741481. The copy is guarded by the double at unit +0x58; the mapping from `xue.gt.tsv` rows to the type record is not read.
 ```
 
 ### 2.3 What the code does not establish
 
-- No engine formula maps `Attaque`, `Defense`, `Vitesse`, `Rayon` or `Distance d'attaque` to combat or movement. Only `Prix` is consumed by a named price routine (section 3) `[data xue.gt.tsv "soldats CRG Niv1"]` `[fn 0x1cba4d0]`.
+- No engine formula maps `Attaque`, `Defense`, `Vitesse`, `Rayon` or `Distance d'attaque` to combat or movement. The price routine in section 3 operates on a `0x3b0` type record, not on a `xue.gt.tsv` row; the row-to-record mapping is `(not read)` `[data xue.gt.tsv "soldats CRG Niv1"]` `[fn 0x1cba4d0]`.
 - No build duration column is present in `xue.gt.tsv` `[data xue.gt.tsv "tanks Niv1"]`.
 - The table has no declared physical units. The old km/h and km readings are unsupported `[data xue.gt.tsv "soldats CRG Niv1"]`.
 - The 1,050-row claim is corrected to 1,048 data rows `[data xue.gt.tsv "soldats CRG Niv1"]`.
 
 ## 3. Construction, Price and Reconstruction
 
-`add_construction` is a generic construction-queue routine, not a unit-procurement routine. Its source label is `add_construction() in d:\_gps5\prog\gps_construction.cpp` (corpus line 2706971) `[fn 0x18fd700 add_construction]`. It resolves a build type through `f_1cd6530`, writes a price into `param_2+0xb0`, and enqueues through `f_11b2280`/`f_11b24f0`; the whole 8,467-byte body was not read, so the later branches are `(not read)`.
+`add_construction` is a generic construction-queue routine, not a unit-procurement routine. Its source label is `add_construction() in d:\_gps5\prog\gps_construction.cpp` (corpus line 2706971) `[fn 0x18fd700 add_construction]`. It resolves a build type through `f_1cd6530`, writes a price into the build record at offset `+0xb0`, and enqueues through `f_11b2280`/`f_11b24f0`; the whole 8,467-byte body was not read, so the later branches are `(not read)`.
 
-The named price function is real and computes rather than loads a price:
-
-```c
-// prix_normal_construction, corpus lines 3345743-3345787
-uVar3 = f_1cd6530(..., 0x278a, '\x01');
-lVar4 = (longlong)(int)uVar3 * 0x3b0;
-fVar5 = 1.0;
-if ((*(byte *)(lVar4 + G_47938898) & 0x10) != 0) {
-    fVar5 = f_1c7e750(param_2);                       // (not read)
-}
-if (!finite(fVar5) || fVar5 <= 0.0) fVar5 = 1.0;
-dVar1 = f_1cd9b10(1.0, param_2);                      // (not read)
-afStackX_8[0] = *(float *)(lVar4 + G_47938a74);
-if (afStackX_8[0] == 0.0) afStackX_8[0] = 1.0;
-afStackX_8[0] = ((float)dVar1 * *(float *)(lVar4 + G_47938888) * fVar5) / afStackX_8[0];
-return f_a553f0(afStackX_8, 5);                       // call not read
-```
-
-The record stride here is `0x3b0`, and the offsets relative to the record base are `+0x10` for the flag byte, `+0x0` and `+0x1ec` for the two floats `[qty 0x3b0 stride]` `[fn 0x1cba4d0 prix_normal_construction]`. The old wording "base price loaded from `prix_normal_construction`" is corrected: the value is derived from a type record, an optional multiplier, an inflation term and a divisor.
+The named price function `prix_normal_construction` is real and computes rather than loads a price. It looks up a `0x3b0`-byte type record through `f_1cd6530`, optionally applies `f_1c7e750`, clamps the factor to 1.0 when it is non-finite or non-positive, obtains an inflation index from `f_1cd9b10(1.0, ...)`, and computes `inflation * record_base_value * factor / record_divisor`, then passes the result to `f_a553f0(..., 5)` (lines 3345745-3345787) `[qty 0x3b0 stride]` `[fn 0x1cba4d0 prix_normal_construction]`. The old wording "base price loaded from `prix_normal_construction`" is corrected: the value is derived, not loaded.
 
 ### 3.1 The four "requirements" in the old draft
 
 1. **Financial allocation.** `prix_normal_construction` exists and is named; it is the only price routine found for construction `[fn 0x1cba4d0]`. There is no separate military-unit price path in the corpus.
-2. **Industrial capacity (`DEFA`, `DEF2`, `DEFB`).** `DEFA` is a four-character code, not an output function: it occurs once as `[tag 0x44454641 "DEFA"]` in a label assignment (corpus line 2095915). `DEF2` and `DEFB` occur as data keys in `xim.gt.tsv`, `xia.gt.tsv` and `xrn.gt.tsv`; no function computes a defense-industrial output from them. This requirement is removed.
-3. **Manpower quota (`MILA` at `+0xc850`).** `MILA` is a variable code `[tag 0x4d494c41 "MILA"]`. The `get_variable` switch maps it to `param_1 + 0x6428`, not `+0xc850` (corpus line 4828470) `[fn 0x2593bd0 get_variable]`. The old offset is corrected.
+2. **Industrial capacity (`DEFA`, `DEF2`, `DEFB`).** `DEFA` is a four-character code, not an output function: it occurs once as `[tag 0x44454641 "DEFA"]` in a label assignment (corpus line 2095915). `DEF2` occurs in `xim.gt.tsv` and `xqm.gt.tsv`; `DEFB` occurs in `xia.gt.tsv`, `xim.gt.tsv`, `xrn.gt.tsv` and `xso.gt.tsv`; no function computes a defense-industrial output from them. This requirement is removed.
+3. **Manpower quota (`MILA` at `+0xc850`).** `MILA` is a variable code `[tag 0x4d494c41 "MILA"]`. The `get_variable` switch reads the field at offset `+0x6428`, not `+0xc850` (corpus line 4828470) `[fn 0x2593bd0 get_variable]`. The old offset is corrected.
 4. **Build duration (90 days / 720 days).** No such constants occur in the corpus size or in `xue.gt.tsv`. The `xan.gt.tsv` rows 330096, 330097 and 330098 have an empty construction-duration cell. This requirement is removed.
 
 The three `xan.gt.tsv` ids are action ids, and they are also code literals. Row 330096 is `Bases militaires / Military bases` `[data xan.gt.tsv "330096"]`; the same id appears as a switch case in `Cmenu_droit__do_action` (corpus line 5342038) and in `f_203bc10` (corpus line 5346849) `[qty 0x50970 action-id]` `[fn 0x2021e10 Cmenu_droit__do_action]`. Rows 330097 and 330098 likewise map to naval and air bases `[data xan.gt.tsv "330097"]` `[data xan.gt.tsv "330098"]` `[qty 0x50971 action-id]` `[qty 0x50972 action-id]`.
 
 ### 3.2 Upkeep and readiness
 
-There is no upkeep arithmetic. `BDEM` is a variable code, not a NATI offset: `[tag 0x4244454d "BDEM"]` and `get_variable` returns `*(u32 *)(param_1 + 0x3db2)` (corpus line 4832402) `[fn 0x2593bd0 get_variable]`. The old claim "`BDEM` at offset `+0x7b64` in `NATI`" is corrected; `+0x7b64` is not in that branch.
+There is no upkeep arithmetic. `BDEM` is a variable code, not a NATI offset: `[tag 0x4244454d "BDEM"]` and `get_variable` returns the 32-bit word at offset `+0x3db2` (corpus line 4832402) `[fn 0x2593bd0 get_variable]`. The old claim "`BDEM` at offset `+0x7b64` in `NATI`" is corrected; `+0x7b64` is not in that branch.
 
-`CATE` is also a variable code `[tag 0x43415445 "CATE"]`; its getter calls `f_1bec400(6, param_1, 0)` (corpus line 4832594), not an offset `+0x230`.
+`CATE` is also a variable code `[tag 0x43415445 "CATE"]`; its getter calls `f_1bec400` with argument 6 and the nation record (corpus line 4832594), not an offset `+0x230`.
 
 The old upkeep expression `BasePrice * mu * (1 + OverseasMultiplier)` and the "readiness decay ... hit points decay by up to 2% per macro-turn" are removed. Searches for `0.98`, `0.02` and `- 0.02` against unit-record accesses in `calc_unites` and `f_24b4580` returned no such assignment; the only subtractions on unit records found are path progress and a timestamp, not hit points.
 
 ### 3.3 Reconstruction cost
 
-`calcul_cout_reconstruction` is real, and its arithmetic is not the old repair formula:
-
-```c
-// calcul_cout_reconstruction, corpus lines 4705085-4705160
-uVar4 = f_1cd6530(..., 0x2d8a, '\x01');
-lVar5 = (longlong)(int)uVar4 * 0x3b0;
-dVar7 = f_1cd9b10(..., param_1) / (double)*(float *)(lVar5 + G_47938a74);  // (not read)
-... log10 / powf rounding to a power of ten ...
-fVar6 = (float)dVar8;
-if (((*(uint *)(param_2 + 0xb0) >> 0x10 & 1) != 0) &&
-    (fVar6 = fVar6 * 0.125, 1 < (*(uint *)(param_2 + 0xb0) & 0xfff) - 2)) {
-    if (*(int *)(param_2 + 0x130) < 500000) fVar6 = fVar6 / 10.0;
-    else if (*(int *)(param_2 + 0x130) < 1000000) fVar6 = fVar6 / 100.0;
-    else fVar6 = fVar6 / 1000.0;
-}
-return (fVar6 * 0.65 * (float)*(int *)(param_2 + 0x72c)) / (float)f_253fb20(param_2);
-```
-
-So the returned quantity is `(rounded_cost * 0.65 * field_0x72c) / f_253fb20(record)`, with an optional `*0.125` and a `/10`, `/100` or `/1000` scale selected by `field_0x130` at 500,000 and 1,000,000 `[fn 0x24c7870 calcul_cout_reconstruction]`. The old `(1 - hp/hp_max) * BasePrice * 0.40` is removed: there is no hp ratio and no 0.40.
+`calcul_cout_reconstruction` rounds a table/inflation quotient to a power of ten. When the unit's `+0xb0` word has bit 16 set and its low 12 bits exceed 3, it multiplies by `0.125` and then divides by 10, 100 or 1000 depending on whether the `+0x130` field is below 500,000 or below 1,000,000. The returned value is `cost * 0.65 * field_0x72c / f_253fb20(record)` (lines 4705085-4705160) `[fn 0x24c7870 calcul_cout_reconstruction]`. The old `(1 - hp/hp_max) * BasePrice * 0.40` is removed: there is no hp ratio and no 0.40.
 
 ### 3.4 Logic graph
 
 ```mermaid
 flowchart TD
-    A["add_construction f_18fd700"] --> B["f_1cd6530: build-type record, stride 0x3b0"]
-    B --> C["prix_normal_construction f_1cba4d0"]
-    C --> D{"type flag byte +0x10 & 0x10 ?"}
-    D -->|yes| E["f_1c7e750(param_2) (not read)"]
-    D -->|no| F["factor = 1.0"]
-    E --> G["clamp: !finite or <= 0 -> 1.0"]
-    F --> G
-    G --> H["price = inflation * field+0x0 * factor / field+0x1ec"]
-    H --> I["f_a553f0(price, 5)"]
-    J["calcul_cout_reconstruction f_24c7870"] --> K["round cost from table + inflation"]
-    K --> L{"unit +0xb0 bit 16 set ?"}
-    L -->|yes| M["* 0.125, then /10 or /100 or /1000 by +0x130 thresholds"]
-    L -->|no| N["keep cost"]
-    M --> O["(cost * 0.65 * +0x72c) / f_253fb20(unit)"]
-    N --> O
-    P["upkeep BDEM / CATE"] --> Q["variable code only: no arithmetic found"]
+    A["construction request"] --> B["look up build-type record"]
+    B --> C{"type has a market multiplier?"}
+    C -->|yes| D["apply market multiplier"]
+    C -->|no| E["factor = 1"]
+    D --> F["clamp factor to a positive finite value"]
+    E --> F
+    F --> G["price = inflation * base value * factor / divisor"]
+    G --> H["pass through the rounding helper"]
+    I["reconstruction request"] --> J["round table value to a power of ten"]
+    J --> K{"type bit 16 set and type code above 3?"}
+    K -->|yes| L["multiply by 1/8, then divide by 10, 100 or 1000 by size"]
+    K -->|no| M["keep cost"]
+    L --> N["cost * 0.65 * field_0x72c / helper"]
+    M --> N
 ```
 
-### 3.5 Pseudocode transcribed from `prix_normal_construction` and `calcul_cout_reconstruction`
+### 3.5 Pseudocode: price and reconstruction
 
 ```pseudocode
-// prix_normal_construction, 0x1cba4d0, corpus 3345743-3345787
-function prix_normal_construction(key, param_2):
-    t = f_1cd6530(key, 0x278a, 1)            // (not read)
-    rec = t * 0x3b0
-    factor = 1.0
-    if (*(u8 *)(rec + 0x10) & 0x10) != 0:
-        factor = f_1c7e750(param_2)          // (not read)
-    if not finite(factor) or factor <= 0.0:
-        factor = 1.0
-    infl = f_1cd9b10(1.0, param_2)           // (not read)
-    den = *(f32 *)(rec + 0x1ec)
-    if den == 0.0: den = 1.0
-    price = ((f32)infl * *(f32 *)(rec + 0x0) * factor) / den
-    return f_a553f0(price, 5)                // (not read)
+Goal: compute a construction price.
 
-// calcul_cout_reconstruction, 0x24c7870, corpus 4705085-4705160
-function calcul_cout_reconstruction(param_1, rec, param_3):
-    t = f_1cd6530(param_3, 0x2d8a, 1)        // (not read)
-    v = t * 0x3b0
-    d = f_1cd9b10(*(f32 *)(v + 0x0), param_1) / *(f32 *)(v + 0x1ec)   // (not read)
-    // log10 + powf rounding block (read, lines 4705099-4705145)
-    f = round_pow10(d)
-    if (*(u32 *)(rec + 0xb0) >> 0x10 & 1) != 0:
-        f = f * 0.125
-        if ((*(u32 *)(rec + 0xb0) & 0xfff) - 2) > 1:
-            if *(i32 *)(rec + 0x130) < 500000:   f = f / 10.0
-            elif *(i32 *)(rec + 0x130) < 1000000: f = f / 100.0
-            else:                                 f = f / 1000.0
-    return (f * 0.65 * (f32)*(i32 *)(rec + 0x72c)) / (f32)f_253fb20(rec)  // (not read)
+function construction_price(type_key, market):
+    type_record = look_up_build_type(type_key)       // f_1cd6530, not read
+    factor = 1
+    if type_record.has_market_multiplier:
+        factor = market_multiplier(market)           // f_1c7e750, not read
+    if factor is not finite or factor <= 0:
+        factor = 1
+    inflation = inflation_index(market)              // f_1cd9b10, not read
+    divisor = type_record.divisor_at_0x1ec
+    if divisor == 0: divisor = 1
+    price = inflation * type_record.base_value_at_0x0 * factor / divisor
+    return round_5(price)                            // f_a553f0, not read
+
+Goal: compute a reconstruction cost.
+
+function reconstruction_cost(unit, market):
+    type_index = look_up_reconstruction_type(unit)   // f_1cd6530 returns a type index, not a cost
+    type_record = type_index * 0x3b0                 // record stride, f_24c7870:4705117
+    value = price_index(type_record.value_at_0x0, market)  // f_1cd9b10, not read
+    divisor = type_record.divisor_at_0x1ec           // +0x1ec, f_24c7870:4705121
+    cost = round_to_power_of_ten(value / divisor)    // rounding block, f_24c7870:4705123-4705145
+    if unit.type_word has bit 16 set and unit.type_code > 3:
+        cost = cost * 0.125                          // 1/8, f_24c7870:4705146
+        if unit.size_field < 500000:                 // f_24c7870:4705147
+            cost = cost / 10
+        else if unit.size_field < 1000000:           // f_24c7870:4705150
+            cost = cost / 100
+        else:
+            cost = cost / 1000
+    return cost * 0.65 * unit.field_0x72c / unit.helper()  // final weight, f_24c7870:4705159
+> Evidence: prix_normal_construction [fn 0x1cba4d0], corpus 3345743-3345787; calcul_cout_reconstruction [fn 0x24c7870], corpus 4705085-4705160. `0.125` = 1/8 at 4705146, `0.65` at 4705159, and `500000`/`1000000` at 4705147/4705150.
 ```
 
 ### 3.6 What the code does not establish
@@ -327,56 +246,20 @@ function calcul_cout_reconstruction(param_1, rec, param_3):
 
 ## 4. The Daily Unit Pass: `calc_unites` and Movement, Not Attrition
 
-`calc_monde` calls `calc_unites(param_1)` once in its daily sequence (corpus line 2031121) `[fn 0x13f3290 calc_monde]` `[fn 0x24c5200 calc_unites]`. The "Phase 8" label in the old draft is not in the code; only the call site is established.
+`calc_monde` calls `calc_unites` once in its daily sequence (corpus line 2031121) `[fn 0x13f3290 calc_monde]` `[fn 0x24c5200 calc_unites]`. The "Phase 8" label in the old draft is not in the code; only the call site is established.
 
-`calc_unites` has two unit walks. The first is the empty-record cleanup already shown in section 1. The second walks each nation's unit list, whose head is at `[qty 0x3b44 offset]` in the NATI record and whose next link is `+0x8`, skips `[qty 0x20790]`, and selects an update path from bits 12 and 13 of the `+0xa0` flag word:
+`calc_unites` has two unit walks. The first is the empty-record cleanup shown in section 1. The second walks each nation's unit list, whose head is at `[field 0x3b44 in NATI]` and whose next link is `+0x8`. It skips `[qty 0x20790]`. The dispatch is (corpus lines 4704119-4143):
 
-```c
-// calc_unites, corpus lines 4704114-4704132
-iVar16 = *(int *)(lVar17 + 0x3b44);                  // nation's unit-list head
-do {
-    if (iVar16 < 1) break;
-    lVar17 = (longlong)iVar16 * 0x750;
-    iVar16 = *(int *)(lVar17 + G_61d0deb8);          // next at +0x8
-    if (*(int *)(lVar17 + G_61d0df6c) != 0x20790) {  // field +0xbc
-        if ((*(uint *)(lVar17 + G_61d0df50) >> 0xc & 1) == 0) {
-            if ((*(uint *)(lVar17 + G_61d0df50) >> 0xd & 1) == 0) continue;
-            ...
-        } else {
-            if (*(int *)(lVar17 + G_61d0df6c) != 0x92819) {
-                f_24b06e0(lVar17 + G_61d0deb0, param_2, iVar22, iVar22);
-                continue;
-            }
-            ...
-        }
-        ...
-    }
-} while (true);
-```
+- bit 12 clear and bit 13 clear: skip the unit.
+- bit 12 clear and bit 13 set: call `f_24b4580` directly.
+- bit 12 set and kind not `[qty 0x92819]`: call `f_24b06e0`, which itself calls `f_24b4580` and then the order follow-ups.
+- bit 12 set and kind is `[qty 0x92819]`: call `f_24b4580` directly.
 
-`f_24b06e0` is a thin dispatcher. When the record's `+0xbc` word is not `[qty 0x20790]` it calls `f_24b4580`, then optionally `f_24d0bd0` and `f_24d0920` with readiness checks `f_251e710`/`f_257aa60` and follow-ups `f_24ee030`/`f_24ecd70` `[fn 0x24b06e0 f_24b06e0]`.
+`f_24b06e0` is a thin dispatcher: when the record is not the empty kind it calls `f_24b4580`, then optionally `f_24d0bd0` and `f_24d0920` with readiness checks `f_251e710`/`f_257aa60` and follow-ups `f_24ee030`/`f_24ecd70` `[fn 0x24b06e0 f_24b06e0]`.
 
-The one movement computation read in full is `f_24b0890`. It turns an order speed and a day-dependent term into a distance budget, then advances the unit along its path:
+The movement path `f_24b0890` turns an order speed and a day-dependent term into a distance budget. It uses a 16-byte pair at `+0x78`/`+0x80` for a pending event or path check (lines 4692737-4692738; the semantic name is not read), then adds the `+0xc8` stat minus the `+0xf0` accumulator, splits the result into whole steps and a remainder, and advances the unit along its target path. The speed multiplier is `[global 0x32210d8 f32]` `[fn 0x24b0890 f_24b0890]`.
 
-```c
-// f_24b0890, corpus lines 4692684-4692731
-fVar14 = f_25c6b70(_DAT_464916a8 + *(int *)(param_1 + 0x28), 0.2);   // (not read)
-fVar14 = _DAT_32210d8 * (fVar14 + 0.9) * param_2;
-if (fVar14 <= 0.0) { ... return; }
-...
-fVar16 = 1.0;
-if (1.0 <= fVar14) fVar16 = fVar14;
-fVar14 = *(float *)(param_1 + 200);                                  // field +0xc8
-fVar16 = fVar16 + (fVar14 - (float)*(int *)(param_1 + 0xf0));
-uVar13 = (uint)(fVar16 / fVar14);
-fVar15 = fmodf(fVar16, fVar14);
-...
-f_2519f80(param_1, lVar7 * 0x750 + G_61d0deb0, (int)fVar16);         // (not read)
-```
-
-The global `_DAT_32210d8` resolves as `[global 0x32210d8 u32]`; the day counter `_DAT_464916a8` as `[global 0x464916a8 i32]`; the unit stat at `+0xc8` and the integer at `+0xf0` are the movement scale and accumulator `[field 0xc8 in UNIT]` `[field 0xf0 in UNIT]` `[fn 0x24b0890 f_24b0890]`.
-
-### 4.1 No attrition, no grid
+### 4.1 No attrition, no 100x100 combat hash
 
 The independent searches for the old combat model:
 
@@ -384,72 +267,64 @@ The independent searches for the old combat model:
 - A corpus search for its hyphenated two-word ratio spelling returns 0.
 - No `dA/dt`, no per-tick subtraction of a strength or hit-point field, no terrain/weather/posture multiplier, no ammunition field, no rout test at 0.25 or 0.20.
 - The only two-sided strength arithmetic is the war score in section 5: it sums `(field_0xc8 + field_0xc4) * field_0xec` on each side and compares ratios. It does not subtract casualties from either side.
-- The old spatial hash is absent. There is no `CellY * 100 + CellX` expression, no 10,000-cell array, and no `x/100`, `y/100` cell index. The only 10,000 in `calc_unites` guards a doubly linked iterator list: `if (uVar21 < 10000)` and `9999 < uVar21` -> `"Bad iterator"` (corpus lines 4703792-4703814) `[fn 0x24c5200]`. That is an object iterator, not a world grid.
-
-The old 120,000 x 0x750 pool is real, but it is traversed by index lists, not by spatial buckets. The old `10,000` cells and the `CellX/CellY` equations are removed.
+- The old 100x100 combat hash is absent from `calc_unites`: there is no `CellY * 100 + CellX`, no 10,000-cell unit array, and no `x/100`, `y/100` cell index there. The only 10,000 in `calc_unites` guards a doubly linked iterator list (a 10,000-entry bound; the out-of-range path throws `"Bad iterator"`, corpus lines 4703792-4703814) `[fn 0x24c5200]`. That is an object iterator, not a unit-neighbour grid. A separate 128-column map-cell index exists in `f_1327960` at corpus line 1970021: row index times 128 plus column index `[fn 0x1327960 f_1327960]` `[qty 0x80 grid-width]`; it is not a 100x100 combat hash.
 
 ### 4.2 Logic graph
 
 ```mermaid
 flowchart TD
-    A["calc_monde calls calc_unites (corpus 2031121)"] --> B["calc_unites f_24c5200"]
-    B --> C{"global 0x4649165c != 0 ?"}
-    C -->|yes| D["walk head 0x61d0deb4, remove kind 0x20790"]
-    C -->|no| E["per-nation unit list: NATI+0x3b44, next +0x8"]
-    E --> F{"kind +0xbc == 0x20790 ?"}
-    F -->|yes| E
-    F -->|no| G{"flags +0xa0 bit 12 ?"}
-    G -->|no| H{"flags +0xa0 bit 13 ?"}
-    H -->|no| E
-    H -->|yes| I["f_24b06e0 / f_24b4580"]
-    G -->|yes, kind != 0x92819| I
-    I --> J["f_24b0890 movement"]
-    J --> K["budget = global 0x32210d8 * (dayterm + 0.9) * order_speed"]
-    K --> L["advance = max(1.0,budget) + (+0xc8 - +0xf0)"]
-    L --> M["whole = advance / +0xc8; frac = fmodf(advance, +0xc8)"]
-    M --> N["f_2519f80(rec, target, (int)advance)"]
-    O["attrition / terrain / ammo / rout"] --> P["not found in corpus"]
+    A["daily pass starts"] --> B["for each nation: walk its unit list"]
+    B --> C{"unit kind is the empty kind?"}
+    C -->|yes| B
+    C -->|no| D{"flag bit 12 set?"}
+    D -->|no| E{"flag bit 13 set?"}
+    E -->|no| B
+    E -->|yes| F["update unit directly (f_24b4580)"]
+    D -->|yes| G{"unit kind is the special kind?"}
+    G -->|yes| F
+    G -->|no| H["run orders (f_24b06e0): update plus order follow-ups"]
+    F --> B
+    H --> B
+    I["separate movement path (f_24b0890)"] --> J["budget, event pair, path advance"]
+    K["attrition / terrain / ammo / rout"] --> L["not found in corpus"]
 ```
 
-### 4.3 Pseudocode transcribed from `calc_unites`, `f_24b06e0` and `f_24b0890`
+### 4.3 Pseudocode: the daily unit pass and movement
 
 ```pseudocode
-// calc_unites, 0x24c5200, corpus 4704114-4132
-function per_nation_pass(nation):
-    head = *(i32 *)(nation + 0x3b44)
-    while head > 0:
-        rec = head * 0x750
-        head = *(i32 *)(base + 0x8 + rec)          // next link at +0x8
-        if *(i32 *)(base + 0xbc + rec) == 0x20790: continue
-        flags = *(u32 *)(base + 0xa0 + rec)
-        if (flags >> 12 & 1) == 0:
-            if (flags >> 13 & 1) == 0: continue
-        if *(i32 *)(base + 0xbc + rec) != 0x92819:
-            f_24b06e0(base + rec, param_2, iVar22, iVar22)
-        // otherwise: another branch (not read)
+Goal: advance every unit once.
 
-// f_24b06e0, 0x24b06e0, corpus 4692585-4692605
-function f_24b06e0(rec, param_2, param_3, param_4):
-    if *(i32 *)(rec + 0xbc) != 0x20790:
-        f_24b4580(rec, param_2)                    // body not read in full
-        if param_4 != 0:
-            if f_24d0bd0(rec, ...) != 0:
-                if f_251e710(rec, 1) != 0 and f_257aa60(rec) == 0:
-                    f_24ee030(rec)
-            if f_24d0920(rec, ...) != 0:
-                if f_251e710(rec, 1) != 0 and f_257aa60(rec) == 0:
-                    f_24ecd70(rec)
+for each nation:
+    next_index = nation.unit_list_head
+    while next_index > 0:
+        unit = pool[next_index]
+        next_index = unit.next_index          // save before any handler
+        if unit.kind == empty_kind:           // 0x20790, f_24c5200:4704121
+            continue
+        if flag_bit_12(unit) is clear:
+            if flag_bit_13(unit) is clear:
+                continue
+            update_unit(unit)                 // f_24b4580
+        else:
+            if unit.kind == special_kind:     // 0x92819, f_24c5200:4704129
+                update_unit(unit)             // f_24b4580
+            else:
+                run_orders(unit)              // f_24b06e0: f_24b4580 + order follow-ups
 
-// f_24b0890, 0x24b0890, corpus 4692684-4692731
-function move(unit, order_speed, ...):
-    dayterm = f_25c6b70(day + *(i32 *)(unit + 0x28), 0.2)   // (not read)
-    budget  = *(u32 *)0x32210d8 * (dayterm + 0.9) * order_speed
-    if budget <= 0.0: ... return
-    advance = max(1.0, budget) + (*(f32 *)(unit + 0xc8) - (f32)*(i32 *)(unit + 0xf0))
-    whole   = (u32)(advance / *(f32 *)(unit + 0xc8))
-    frac    = fmodf(advance, *(f32 *)(unit + 0xc8))
-    if target != 0:
-        f_2519f80(unit, target * 0x750 + G_61d0deb0, (i32)advance)   // (not read)
+Goal: move one unit along its path.
+
+function move_unit(unit, order_speed):
+    dayterm = smoothing(day + unit.timer, 0.2)          // f_25c6b70, not read
+    budget = speed_global * (dayterm + 0.9) * order_speed   // 0.9 base speed term, f_24b0890:4692685
+    if budget <= 0: return
+    if unit has a pending event at pair_0x78_0x80:
+        log_event(unit, 0x5c)                            // 0x5c event id, f_24b0890:4692715
+    advance = max(1, budget) + (unit.stat_c8 - unit.field_f0)
+    whole_steps = advance / unit.stat_c8
+    fraction = remainder(advance, unit.stat_c8)
+    if unit.target is set:
+        advance_along_path(unit, unit.target, advance)
+> Evidence: calc_unites [fn 0x24c5200], corpus 4704114-4704145; f_24b06e0 [fn 0x24b06e0], corpus 4692585-4692605; f_24b0890 [fn 0x24b0890], corpus 4692684-4692731. `0.9` is the base speed term, `0x5c` the log/event id, `0x92819` the special unit kind.
 ```
 
 ### 4.4 What the code does not establish
@@ -458,90 +333,43 @@ function move(unit, order_speed, ...):
 - No terrain, weather, posture or cover multiplier `[fn 0x24b4580]`.
 - No ammunition count and no "attack drops to 10%" branch `[fn 0x24b4580]`.
 - No morale/rout threshold `[fn 0x24b4580]`.
-- No spatial partition; the unit lists are intrusive index lists `[fn 0x24c5200]`.
+- No 100x100 combat hash in `calc_unites`; its unit lists are intrusive index lists `[fn 0x24c5200]`. A separate 128-column map-cell index exists in `f_1327960` (row index times 128 plus column index, line 1970021), not a unit-neighbour hash `[fn 0x1327960]` `[qty 0x80 grid-width]`.
 
-## 5. War Records, Urban Effects and the Absence of a Nuclear Model
+## 5. War Records, Urban Effects and the Absence of a Nuclear Launch/Exchange Model
 
 ### 5.1 The war-record pool
 
 The `CONF` pool is real. `array_inventory.tsv` records 2,000 records of `0x12d0` bytes (9,632,000 bytes), holder `&DAT_433f40e0`, loader `f_1394d20`, serializer `f_14585e0`, 151 users `[fn 0x14585e0 f_14585e0]` `[fn 0x1394d20 f_1394d20]` `[qty 0x12d0 stride]`. The claimed field semantics (attacker coalition, defender coalition, annexation/regime-change objectives, casus belli, UN authorization) are not established by the pool or the serializer header. Only the pool geometry is verified.
 
-The urban routine indexes a different, larger pool by a separate stride (corpus line 4125185): 3,200 records of that size `[qty 0x9cf8 stride]` `[fn 0x13a07b0 f_13a07b0]` `[fn 0x219cfb0 gestion_popu_warville]`.
+The urban routine indexes a different, larger pool by a separate stride (corpus line 4125184): 3,200 records of `0x9cf8` bytes (`array_inventory.tsv` row 413) `[qty 0x9cf8 stride]` `[fn 0x13a07b0 f_13a07b0]` `[fn 0x219cfb0 gestion_popu_warville]`.
 
 ### 5.2 The war score
 
-`f_1329770` computes a scalar war score. It walks the unit lists, filters by type/flag, and sums a strength term per side:
+`f_1329770` computes a scalar war score. It starts from a day term, walks the unit lists and sums a strength term per side, then combines the terms (lines 1970173, 1970246-1970248, 1970271, 1970302, 1970305-1970306) `[fn 0x1329770 f_1329770]` `[global 0x31ed6c90 i64]` `[global 0x464916a8 i32]`.
 
-```c
-// f_1329770, corpus lines 1970173, 1970246-1970248, 1970271
-iStackX_20 = (int)(((float)param_1[9] * 0.5 + 50.0) - (float)(_DAT_464916a8 - param_1[10]));
-...
-fVar17 = (*(float *)(lVar10 + 200 + _DAT_31ed6c90) +
-          *(float *)(lVar10 + 0xc4 + _DAT_31ed6c90)) *
-         (float)*(int *)(lVar10 + 0xec + _DAT_31ed6c90);
-...
-fVar16 = fVar16 * 100.0 * 0.25 + (float)iVar12 + (float)iVar5 * 0.25 + (float)(iVar11 - iVar14);
-...
-if (param_1[2] == 2) {
-    ...
-    fVar16 = (fVar19 - fVar18) * 0.25 + fVar16;
-}
-...
-if (3 < _DAT_464916a8 - param_1[10]) {
-    fVar16 = fVar16 + -40.0;
-}
-```
-
-The reads are `[fn 0x1329770 f_1329770]`, `[global 0x31ed6c90 i64]`, `[global 0x464916a8 i32]`. The strength term uses fields `+0xc8`, `+0xc4` and `+0xec` `[field 0xc8 in UNIT]` `[field 0xc4 in UNIT]` `[field 0xec in UNIT]`. The score is a daily comparison of aggregated unit values, not a per-unit attrition step.
+The strength term uses fields `+0xc8`, `+0xc4` and `+0xec` `[field 0xc8 in UNIT]` `[field 0xc4 in UNIT]` `[field 0xec in UNIT]`. The score is a daily comparison of aggregated unit values, not a per-unit attrition step.
 
 ### 5.3 Urban population effects
 
-`gestion_popu_warville` does not subtract city or national population. It takes the war score and applies a per-record modifier to up to the number of affected records:
+`gestion_popu_warville` does not subtract city or national population. It takes the war score and applies a per-record modifier to up to the number of affected records: the base rate is `-0.005`, or `-0.0025` when the score is negative; it doubles when the record's owner field equals the war's `+8` field; the product is clamped to `[-10, +10]` and divided by 100 before being passed to `f_21c7410` (corpus lines 4125312-4125411) `[qty 0xad0 stride]` `[fn 0x21c7410 f_21c7410]`.
 
-```c
-// gestion_popu_warville, corpus lines 4125312-4125411
-fVar27 = f_1329770((int *)puVar25, pdVar12, pdVar9);
-...
-fVar28 = -0.005;
-if (fVar27 < 0.0) fVar28 = -0.0025;
-if (*(uint *)(psVar24 + 0x176) == puVar25[8]) fVar28 = fVar28 + fVar28;
-fVar28 = fVar28 * fVar27;
-if (-10.0 <= fVar28) { fVar29 = 10.0; if (fVar28 <= 10.0) fVar29 = fVar28; }
-else fVar29 = -10.0;
-...
-f_21c7410((longlong)iVar6 * 0xad0 + _DAT_5d85ada0, fVar29 / 100.0, 0, uVar26, ...);
-```
-
-The pool is 51,000 records at `[qty 0xad0 stride]` in `_DAT_5d85ada0` (array inventory), and `f_21c7410` modifies a record in that pool, not a population counter `[fn 0x21c7410 f_21c7410]`. The tags `PP94`/`PP95`/`G0WV` are the effect codes `[tag 0x50503934 "PP94"]` `[tag 0x50503935 "PP95"]` `[tag 0x47305756 "G0WV"]`.
-
-The old formula with `Pop_city * sum(Damage) / Fortification * 0.005` is removed. There is no fortification term, no damage sum and no population write. There is a real `0.005`/`0.0025` coefficient, but it multiplies the war score and goes through a clamp and a division by 100 before reaching a record in the `0xad0` pool.
+The old formula with `Pop_city * sum(Damage) / Fortification * 0.005` is removed. There is no fortification term, no damage sum and no population write. The pool is 51,000 records at `[qty 0xad0 stride]` in the array inventory's person pool, and `f_21c7410` modifies a record in that pool, not a population counter.
 
 `calc_cata_victimes_initiales` is real but is a catastrophe estimator, not urban combat: its source label is `calc_cata_victimes_initiales() in d:\_gps5\prog\gps_catas.cpp` (corpus line 2625008), and its arithmetic uses `log10`, `powf(10.0, ...)`, a float field at `+0x9a0`, and constants such as `0.15`, `860.0`, `0.013076923` and `0.125` `[fn 0x182afc0 calc_cata_victimes_initiales]`. It is not the formula the old section quoted.
 
 ### 5.4 The two "refugee/homeless" codes
 
-`NSDF` is a variable code `[tag 0x4e534446 "NSDF"]`; `get_variable` reads or writes `param_1 + 0x223c` (corpus lines 4829461-4829470) `[fn 0x2593bd0 get_variable]`. The old `+0x4478` is not in that branch.
+`NSDF` is a variable code `[tag 0x4e534446 "NSDF"]`; `get_variable` reads or writes the field at offset `+0x223c` (corpus lines 4829461-4829470) `[fn 0x2593bd0 get_variable]`. The old `+0x4478` is not in that branch.
 
-`RCLW` is a variable code `[tag 0x52434c57 "RCLW"]`; its getter calls `f_1056100()`, which sums two NATI floats at `[qty 0x6434a8 offset]` and `[qty 0x6434ac offset]` across active nations (corpus lines 1481952-1481958) `[fn 0x1056100 f_1056100]`.
+`RCLW` is a variable code `[tag 0x52434c57 "RCLW"]`; its getter calls `f_1056100()`, which sums two NATI floats at `[field 0x6434a8 in NATI]` and `[field 0x6434ac in NATI]` across active nations (corpus lines 1481952-1481958) `[fn 0x1056100 f_1056100]`.
 
-The old claim that RCLW lives at this offset is a category error: `[field 0x619ca0 in NATI]` is a float field used by `f_205eb70` in a different computation:
+The old claim that RCLW lives at this offset is a category error: `[field 0x619ca0 in NATI]` is a float field used by `f_205eb70` in a different computation. The two adjacent floats are fields `[field 0x619c90 in NATI]` and `[field 0x619ca0 in NATI]`; the result is clamped to at least 0.01 (corpus lines 3910428-3910433) `[fn 0x205eb70 f_205eb70]`. The corpus does not name the field; the old "refugee" label is removed.
 
-```c
-// f_205eb70, corpus lines 3910428-3910433
-fVar13 = *(float *)((longlong)(int)uVar7 * 0x645310 + 0x619c90 + _DAT_46208908);
-uVar7  = f_22f1330((double *)(param_1 + 0x28), 0);
-fVar1  = *(float *)((longlong)(int)uVar7 * 0x645310 + 0x619ca0 + _DAT_46208908);
-fVar10 = f_25c6b70(*(int *)(param_1 + 4) + _DAT_464916a8, 1.0);
-fVar13 = fVar10 * ((fVar13 * 10.0 * (float)(fVar8 == 1.0) + fVar12 + fVar12) -
-                   fVar1 * 10.0 * (float)(fVar9 == 1.0)) + 0.01;
-if (0.01 <= fVar13) { /* kept */ } else { fVar13 = 0.01; }
-```
+### 5.5 No nuclear launch/interception/exchange model
 
-The two adjacent floats are fields `[field 0x619c90 in NATI]` and `[field 0x619ca0 in NATI]` of the NATI record, and the result is clamped to at least 0.01 `[fn 0x205eb70 f_205eb70]`. The corpus does not name the field; the old "refugee" label is removed.
+`xue.gt.tsv` does contain nuclear missile rows, for example `missiles (nucl.) Niv1` `[data xue.gt.tsv "missiles (nucl.) Niv1"]`, and the corpus contains the UI/localisation string `NUCLEAR_DEVELOP` (line 399665). Neither supplies launch, interception or detonation arithmetic.
 
-### 5.5 Nuclear weapons are not implemented
-
-`NUKE` occurs exactly twice, both as a case label in the generic `get_variable` dispatcher (corpus lines 3588017 and 4821458) `[tag 0x4e554b45 "NUKE"]` `[fn 0x1e18460 getval_rdv_rdv_test_cmp]` `[fn 0x25890e0 f_25890e0]`. It maps to a variable slot, not to a launch, interception or detonation function.
+`NUKE` occurs exactly twice, both as a case label: in `getval_rdv_rdv_test_cmp` (corpus line 3588017) and in `f_25890e0` (corpus line 4821458) `[tag 0x4e554b45 "NUKE"]` `[fn 0x1e18460 getval_rdv_rdv_test_cmp]` `[fn 0x25890e0 f_25890e0]`. It maps to a variable slot, not to a launch, interception or detonation function.
 
 `BOMB` is an effect kind passed to `f_21c7410` and to `f_21c7c40`; in `f_21c7410` it merely suppresses the `* 0.75` reduction `[tag 0x424f4d42 "BOMB"]` `[fn 0x21c7410 f_21c7410]`. `MISS` is compared as an object/unit code in `f_8dc870` and `f_8e9480` (corpus lines 141261 and 152433) `[tag 0x4d495353 "MISS"]` `[fn 0x8dc870 f_8dc870]`.
 
@@ -551,65 +379,48 @@ No launch sequence, interception roll, deterrence threshold, 85%-99% mortality c
 
 ```mermaid
 flowchart TD
-    A["war record: 3200 x 0x9cf8 (_DAT_26e03518)"] --> B["f_1329770 war score"]
-    B --> C["unit lists: sum (field+0xc8 + field+0xc4) * field+0xec"]
-    C --> D["score = base*100*0.25 + dayterm + other*0.25 + (iVar11 - iVar14)"]
-    D --> E{"day - war[10] > 3 ?"}
-    E -->|yes| F["score += -40.0"]
-    E -->|no| G["score unchanged"]
-    F --> H["gestion_popu_warville 0x219cfb0"]
-    G --> H
-    H --> I["k = -0.005 (or -0.0025 if score<0)"]
-    I --> J{"record field == war[8] ?"}
-    J -->|yes| K["k = 2k"]
-    J -->|no| L["k unchanged"]
-    K --> M["d = clamp(k*score, -10, +10)"]
-    L --> M
-    M --> N["f_21c7410(record, d/100, 0, tag PP94/PP95)"]
-    N --> O["per-record modifier; no population subtraction"]
-    P["CONF pool 2000 x 0x12d0"] --> Q["geometry only; field semantics not established"]
-    R["NUKE / BOMB / MISS"] --> S["variable and effect codes only; no launch/interception"]
+    A["war record"] --> B["score the war"]
+    B --> C["sum unit strengths by side"]
+    C --> D["apply day term, ratio terms and long-war penalty"]
+    D --> E["for each affected record"]
+    E --> F["choose -0.5% or -0.25%"]
+    F --> G{"same owner?"}
+    G -->|yes| H["double the rate"]
+    G -->|no| I["keep the rate"]
+    H --> J["clamp to +/-10"]
+    I --> J
+    J --> K["apply as a percent modifier"]
+    L["CONF pool"] --> M["geometry only"]
+    N["NUKE / BOMB / MISS labels"] --> O["no launch or exchange arithmetic"]
 ```
 
-### 5.7 Pseudocode transcribed from `f_1329770`, `gestion_popu_warville` and `f_1056100`
+### 5.7 Pseudocode: war score and urban effect
 
 ```pseudocode
-// f_1329770, 0x1329770, corpus 1970173-1970305
+Goal: score a war and apply its effect to nearby population records.
+
 function war_score(war):
-    dayterm = (i32)((f32)war[9] * 0.5 + 50.0 - (f32)(day - war[10]))
-    sideA = 0.0; sideB = 0.0
-    for each unit record u in the side lists:          // 119999 bound, corpus 1970256
-        if u passes the type/flag filters:
-            s = (*(f32 *)(u + 0xc8) + *(f32 *)(u + 0xc4)) * (f32)*(i32 *)(u + 0xec)
-            if side flag: sideA += s else sideB += s
-    score = base * 100.0 * 0.25 + (f32)dayterm + (f32)other * 0.25 + (f32)(iVar11 - iVar14)
-    if war[2] == 2:
-        ratioA = ...; ratioB = ...                     // lines 1970274-1970299
-        score = (ratioA - ratioB) * 0.25 + score
-    if day - war[10] > 3:
-        score = score + -40.0
+    dayterm = war.intensity * 0.5 + 50 - (day - war.start_day)   // 0.5 and 50, f_1329770:1970173
+    side_a = 0; side_b = 0
+    for each unit on each side:
+        strength = (unit.stat_c8 + unit.stat_c4) * unit.count
+        add strength to that side
+    score = base * 100 * 0.25 + dayterm + other * 0.25 + (side_a_count - side_b_count)
+    if war.type == 2:
+        score = score + (ratio_a - ratio_b) * 0.25
+    if day - war.start_day > 3:
+        score = score - 40                                      // long-war penalty, f_1329770:1970305
     return score
 
-// gestion_popu_warville, 0x219cfb0, corpus 4125312-4125411
-function warville(war_index, ...):
-    war = _DAT_26e03518 + war_index * 0x9cf8
+function apply_war_effect(war):
     score = war_score(war)
-    for each affected record p in the 0xad0-stride pool:
-        k = -0.005
-        if score < 0.0: k = -0.0025
-        if *(u32 *)(nation + 0x176) == war[8]: k = k + k
-        d = clamp(k * score, -10.0, 10.0)
-        f_21c7410(p, d / 100.0, 0, tag, ...)            // body not read in full
-
-// f_1056100 (the RCLW getter), corpus 1481952-1481958
-function rclw():
-    a = 0.0; b = 0.0
-    for nation in 1 .. active_nations:
-        f1 = *(f32 *)(nation * 0x645310 + 0x6434a8 + NATI)
-        if f1 > 0.0: a += f1
-        f2 = *(f32 *)(nation * 0x645310 + 0x6434ac + NATI)
-        if f2 > 0.0: b += f2
-    return ...                                          // tail not read
+    for each affected record:
+        k = -0.005                                              // -0.5%, f_219cfb0:4125357
+        if score < 0: k = -0.0025                               // -0.25%, f_219cfb0:4125359
+        if record.owner_field == war.field_8: k = k * 2         // same-owner doubling, f_219cfb0:4125361
+        effect = clamp(k * score, -10, 10)
+        apply_percent_modifier(record, effect / 100)            // f_21c7410, body not read
+> Evidence: f_1329770 [fn 0x1329770], corpus 1970173-1970306; gestion_popu_warville [fn 0x219cfb0], corpus 4125312-4125411; f_21c7410 [fn 0x21c7410], corpus 4161527. `-0.005`/`-0.0025` are the base war-effect rates and `-40` is the long-war penalty.
 ```
 
 ### 5.8 What the code does not establish
@@ -618,4 +429,4 @@ function rclw():
 - No 85%-99% mortality, no `CBAT` deletion, no soot/climate parameter `[tag 0x4e554b45 "NUKE"]`.
 - No population subtraction and no fatality count from urban combat. The routine applies a per-record percentage modifier `[fn 0x219cfb0]` `[fn 0x21c7410]`.
 - No field semantics for the `CONF` pool beyond its size and stride `[fn 0x14585e0]`.
-- No three-state ruin transition logic. `xue.gt.tsv` contains `Ruin` and `Semi-Ruin` rows (for example `bases militaires Ruin Niv1` and `bases militaires Semi-Ruin Niv1`), but the code path that changes a row/state was not found `[data xue.gt.tsv "bases militaires Ruin Niv1"]`.
+- The three-state ruin transition is not established. `xue.gt.tsv` has 462 `Ruin`/`Semi-Ruin` rows (for example `bases militaires Ruin Niv1` and `bases militaires Semi-Ruin Niv1`) and the corpus has `Ruine_` strings at line 1442517, but no state-transition arithmetic was read `[data xue.gt.tsv "bases militaires Ruin Niv1"]`.
