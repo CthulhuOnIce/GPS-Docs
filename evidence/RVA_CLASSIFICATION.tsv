@@ -1,0 +1,392 @@
+file	rva	class	resolved_name_or_type	evidence_pointer
+_whitepaper/00_OVERVIEW.md	0x147d030	function	f_147d030	corpus_index line=2111365 size=67561
+_whitepaper/00_OVERVIEW.md	0x645310	quantity	quantity	literal_hits=10171 first=0x856c70:f_856c70:37217
+_whitepaper/00_OVERVIEW.md	0x46208908	global	i64	globals_index type=i64 size=8 owners=3069
+_whitepaper/00_OVERVIEW.md	0x1463940	function	f_1463940	corpus_index line=2096985 size=11395
+_whitepaper/00_OVERVIEW.md	0x145c5d0	function	f_145c5d0	corpus_index line=2093212 size=16580
+_whitepaper/00_OVERVIEW.md	0x9a2490	function	f_9a2490	corpus_index line=254799 size=4930
+_whitepaper/00_OVERVIEW.md	0x9a3d20	function	f_9a3d20	corpus_index line=255499 size=2638
+_whitepaper/00_OVERVIEW.md	0x14a96e0	function	f_14a96e0	corpus_index line=2137672 size=10282
+_whitepaper/00_OVERVIEW.md	0x1493660	function	f_1493660	corpus_index line=2124576 size=13637
+_whitepaper/00_OVERVIEW.md	0x5d85ada0	global	i64	globals_index type=i64 size=8 owners=879
+_whitepaper/00_OVERVIEW.md	0x1496bb0	function	f_1496bb0	corpus_index line=2126622 size=10699
+_whitepaper/00_OVERVIEW.md	0x146e300	function	f_146e300	corpus_index line=2102875 size=13289
+_whitepaper/00_OVERVIEW.md	0x5d859dc8	global	i64	globals_index type=i64 size=8 owners=726
+_whitepaper/00_OVERVIEW.md	0x1492480	function	f_1492480	corpus_index line=2123884 size=2814
+_whitepaper/00_OVERVIEW.md	0x14a3080	function	f_14a3080	corpus_index line=2133836 size=2156
+_whitepaper/00_OVERVIEW.md	0x1461ca0	function	f_1461ca0	corpus_index line=2095862 size=7319
+_whitepaper/00_OVERVIEW.md	0x14585e0	function	f_14585e0	corpus_index line=2091654 size=5200
+_whitepaper/00_OVERVIEW.md	0x14a7a40	function	f_14a7a40	corpus_index line=2136424 size=4119
+_whitepaper/00_OVERVIEW.md	0x1477fd0	function	f_1477fd0	corpus_index line=2108708 size=1942
+_whitepaper/00_OVERVIEW.md	0x149d6b0	function	f_149d6b0	corpus_index line=2130663 size=5820
+_whitepaper/00_OVERVIEW.md	0x8b9490	function	variable_store_get	corpus_index line=105569 size=183
+_whitepaper/00_OVERVIEW.md	0x32d1920	global	u32	globals_index type=u32 size=4 owners=1
+_whitepaper/00_OVERVIEW.md	0x40d9908	quantity	quantity	literal_hits=4 first=0x143acd0:Cdatabase__es_base:2073818
+_whitepaper/01_SIMULATION_CORE.md	0x25b6690	function	f_25b6690	corpus_index line=4847341 size=157
+_whitepaper/01_SIMULATION_CORE.md	0x70ee6548	global	f64	globals_index type=f64 size=8 owners=4
+_whitepaper/01_SIMULATION_CORE.md	0x70ee6528	global	f64	globals_index type=f64 size=8 owners=4
+_whitepaper/01_SIMULATION_CORE.md	0x70ee6524	global	i32	globals_index type=i32 size=4 owners=20
+_whitepaper/01_SIMULATION_CORE.md	0x70ee651c	global	f32	globals_index type=f32 size=4 owners=9
+_whitepaper/01_SIMULATION_CORE.md	0x70ee6540	global	f64	globals_index type=f64 size=8 owners=5
+_whitepaper/01_SIMULATION_CORE.md	0x70ee6530	global	f64	globals_index type=f64 size=8 owners=3
+_whitepaper/01_SIMULATION_CORE.md	0x1c37d70	function	f_1c37d70	corpus_index line=3294553 size=2091
+_whitepaper/01_SIMULATION_CORE.md	0x464ddc8c	global	f32	globals_index type=f32 size=4 owners=9
+_whitepaper/01_SIMULATION_CORE.md	0x46054ecc	global	f32	globals_index type=f32 size=4 owners=7
+_whitepaper/01_SIMULATION_CORE.md	0x464ddc88	global	u32	globals_index type=u32 size=4 owners=16
+_whitepaper/01_SIMULATION_CORE.md	0x322a4f4	global	f32	globals_index type=f32 size=4 owners=37
+_whitepaper/01_SIMULATION_CORE.md	0x464ddc9c	global	f32	globals_index type=f32 size=4 owners=5
+_whitepaper/01_SIMULATION_CORE.md	0x464ddc98	global	f32	globals_index type=f32 size=4 owners=74
+_whitepaper/01_SIMULATION_CORE.md	0x4813c0a8	global	u64	globals_index type=u64 size=8 owners=36
+_whitepaper/01_SIMULATION_CORE.md	0x25a7630	function	f_25a7630	corpus_index line=4840409 size=62
+_whitepaper/01_SIMULATION_CORE.md	0x25a7940	function	f_25a7940	corpus_index line=4840555 size=10
+_whitepaper/01_SIMULATION_CORE.md	0x25cafe0	function	f_25cafe0	corpus_index line=4860217 size=34
+_whitepaper/01_SIMULATION_CORE.md	0x25dd540	function	f_25dd540	corpus_index line=4872727 size=68
+_whitepaper/01_SIMULATION_CORE.md	0x46494828	global	i32	globals_index type=i32 size=4 owners=110
+_whitepaper/01_SIMULATION_CORE.md	0x25e9b60	function	f_25e9b60	corpus_index line=4880577 size=49
+_whitepaper/01_SIMULATION_CORE.md	0x46494824	global	i32	globals_index type=i32 size=4 owners=55
+_whitepaper/01_SIMULATION_CORE.md	0x25df0d0	function	f_25df0d0	corpus_index line=4873540 size=49
+_whitepaper/01_SIMULATION_CORE.md	0x464916a8	global	i32	globals_index type=i32 size=4 owners=1232
+_whitepaper/01_SIMULATION_CORE.md	0x46494810	global	i32	globals_index type=i32 size=4 owners=5
+_whitepaper/01_SIMULATION_CORE.md	0x4649165c	global	i32	globals_index type=i32 size=4 owners=335
+_whitepaper/01_SIMULATION_CORE.md	0x50ef4788	global	f64	globals_index type=f64 size=8 owners=31
+_whitepaper/01_SIMULATION_CORE.md	0x140e5d0	function	calc_monde_fin_tour	corpus_index line=2048643 size=14350
+_whitepaper/01_SIMULATION_CORE.md	0x1378460	function	bank_step	corpus_index line=1980293 size=60
+_whitepaper/01_SIMULATION_CORE.md	0x239f3b0	function	f_239f3b0	corpus_index line=4493309 size=6155
+_whitepaper/01_SIMULATION_CORE.md	0x13f3290	function	_geolgame__Cgps__calc_monde	corpus_index line=2029428 size=93356
+_whitepaper/01_SIMULATION_CORE.md	0x12bb2b0	function	prof_begin	corpus_index line=1922580 size=4
+_whitepaper/01_SIMULATION_CORE.md	0x12d04b0	function	prof_end	corpus_index line=1922599 size=3
+_whitepaper/01_SIMULATION_CORE.md	0x1a3aa70	function	maj_sat	corpus_index line=2936630 size=38
+_whitepaper/01_SIMULATION_CORE.md	0x18c0970	function	maj_chemin_nation	corpus_index line=2665681 size=1864
+_whitepaper/01_SIMULATION_CORE.md	0x15a7be0	function	maj_agenda	corpus_index line=2277766 size=391
+_whitepaper/01_SIMULATION_CORE.md	0x1d087a0	function	gere_requetes	corpus_index line=3400259 size=3674
+_whitepaper/01_SIMULATION_CORE.md	0x15a5e20	function	gere_rdv	corpus_index line=2276482 size=6974
+_whitepaper/01_SIMULATION_CORE.md	0x1e2eef0	function	gere_histo	corpus_index line=3597927 size=25182
+_whitepaper/01_SIMULATION_CORE.md	0x1cfad00	function	calc_actions	corpus_index line=3392209 size=2136
+_whitepaper/01_SIMULATION_CORE.md	0x24c5200	function	calc_unites	corpus_index line=4703687 size=9838
+_whitepaper/01_SIMULATION_CORE.md	0x2128f80	function	org_adh_loop	corpus_index line=4052807 size=2454
+_whitepaper/01_SIMULATION_CORE.md	0x22c3590	function	reactions_process	corpus_index line=4349710 size=1745
+_whitepaper/01_SIMULATION_CORE.md	0x1053e40	function	f_1053e40	corpus_index line=1480951 size=38
+_whitepaper/01_SIMULATION_CORE.md	0x1409f40	function	calc_monde_debut_tour_etapes	corpus_index line=2045281 size=16575
+_whitepaper/01_SIMULATION_CORE.md	0x1c7d720	function	gereAccordMainOeuvreLissee	corpus_index line=3307897 size=673
+_whitepaper/01_SIMULATION_CORE.md	0x1705700	function	f_1705700	corpus_index line=2551240 size=1248
+_whitepaper/01_SIMULATION_CORE.md	0x17101f0	function	f_17101f0	corpus_index line=2558264 size=731
+_whitepaper/01_SIMULATION_CORE.md	0x170fd40	function	bank_updateInterestRate	corpus_index line=2558076 size=809
+_whitepaper/01_SIMULATION_CORE.md	0x980cc0	function	calcCorpsDebutTrimestre	corpus_index line=232139 size=687
+_whitepaper/01_SIMULATION_CORE.md	0x14134a0	function	_geolgame__Cgps__calc_nation	corpus_index line=2051819 size=8843 conflict=names.tsv/assert_names.tsv
+_whitepaper/01_SIMULATION_CORE.md	0x2128b00	function	org_adh_demand	corpus_index line=4052645 size=1147
+_whitepaper/01_SIMULATION_CORE.md	0x218eaf0	function	calc_PersoPrinc_evol_effectifs_cacher	corpus_index line=4118124 size=1069
+_whitepaper/01_SIMULATION_CORE.md	0x20edc60	function	ordi_strategie_cyber	corpus_index line=4008176 size=8573
+_whitepaper/01_SIMULATION_CORE.md	0x893170	function	calc_astronautes	corpus_index line=75545 size=2165
+_whitepaper/01_SIMULATION_CORE.md	0x8939f0	function	calc_programmes_spatiaux	corpus_index line=75733 size=5226
+_whitepaper/01_SIMULATION_CORE.md	0x1cc4440	function	stat_popularite_add	corpus_index line=3349581 size=156
+_whitepaper/01_SIMULATION_CORE.md	0x1f5b9b0	function	maj_simu_lan_clients	corpus_index line=3717815 size=941
+_whitepaper/01_SIMULATION_CORE.md	0x1c38a50	function	calc_monde_annee	corpus_index line=3294954 size=2326
+_whitepaper/01_SIMULATION_CORE.md	0x8ac300	function	ia_programmes_spatiaux	corpus_index line=95445 size=15826
+_whitepaper/01_SIMULATION_CORE.md	0xd53a40	function	gestion_epidemies	corpus_index line=975953 size=1986
+_whitepaper/01_SIMULATION_CORE.md	0x910ec0	function	calcBourseJour	corpus_index line=174323 size=515
+_whitepaper/01_SIMULATION_CORE.md	0x980f70	function	calcCorpsJour	corpus_index line=232211 size=757
+_whitepaper/01_SIMULATION_CORE.md	0x9e17c0	function	majClassementConsortiums	corpus_index line=292588 size=396
+_whitepaper/01_SIMULATION_CORE.md	0x9e1950	function	majClassementMilliardaires	corpus_index line=292648 size=469
+_whitepaper/01_SIMULATION_CORE.md	0x959710	function	f_959710	corpus_index line=214919 size=3
+_whitepaper/01_SIMULATION_CORE.md	0x324da9c	global	u32	globals_index type=u32 size=4 owners=3
+_whitepaper/01_SIMULATION_CORE.md	0x1a4e8d0	function	f_1a4e8d0	corpus_index line=2945531 size=8
+_whitepaper/01_SIMULATION_CORE.md	0x1a33cf0	function	f_1a33cf0	corpus_index line=2932436 size=934
+_whitepaper/01_SIMULATION_CORE.md	0x255f6b0	function	f_255f6b0	corpus_index line=4788649 size=2889
+_whitepaper/01_SIMULATION_CORE.md	0x1a3aac0	function	f_1a3aac0	corpus_index line=2936643 size=293
+_whitepaper/01_SIMULATION_CORE.md	0x21bf540	function	f_21bf540	corpus_index line=4157233 size=5
+_whitepaper/01_SIMULATION_CORE.md	0x10f2060	function	f_10f2060	corpus_index line=1600101 size=21
+_whitepaper/01_SIMULATION_CORE.md	0x159bfe0	function	f_159bfe0	corpus_index line=2270570 size=20
+_whitepaper/01_SIMULATION_CORE.md	0x21428c0	function	f_21428c0	corpus_index line=4068662 size=523
+_whitepaper/01_SIMULATION_CORE.md	0x193af90	function	f_193af90	corpus_index line=2752034 size=251
+_whitepaper/01_SIMULATION_CORE.md	0x157fb20	function	f_157fb20	corpus_index line=2255297 size=3
+_whitepaper/01_SIMULATION_CORE.md	0x2118290	function	f_2118290	corpus_index line=4040521 size=321
+_whitepaper/01_SIMULATION_CORE.md	0x18e77a0	function	f_18e77a0	corpus_index line=2693813 size=1360
+_whitepaper/01_SIMULATION_CORE.md	0x155cc10	function	f_155cc10	corpus_index line=2237673 size=292
+_whitepaper/01_SIMULATION_CORE.md	0x153c510	function	f_153c510	corpus_index line=2220059 size=730
+_whitepaper/01_SIMULATION_CORE.md	0x1557510	function	f_1557510	corpus_index line=2234977 size=2777
+_whitepaper/01_SIMULATION_CORE.md	0x18e7550	function	f_18e7550	corpus_index line=2693746 size=580
+_whitepaper/01_SIMULATION_CORE.md	0xedcf60	function	f_edcf60	corpus_index line=1303095 size=241
+_whitepaper/01_SIMULATION_CORE.md	0xededa0	function	f_ededa0	corpus_index line=1304128 size=95
+_whitepaper/01_SIMULATION_CORE.md	0x1558b00	function	f_1558b00	corpus_index line=2235584 size=237
+_whitepaper/01_SIMULATION_CORE.md	0x1558620	function	f_1558620	corpus_index line=2235578 size=3
+_whitepaper/01_SIMULATION_CORE.md	0x9de510	function	f_9de510	corpus_index line=290196 size=125
+_whitepaper/01_SIMULATION_CORE.md	0x15427b0	function	f_15427b0	corpus_index line=2223260 size=4311
+_whitepaper/01_SIMULATION_CORE.md	0x1bea500	function	f_1bea500	corpus_index line=3253709 size=874
+_whitepaper/01_SIMULATION_CORE.md	0x1c3c060	function	f_1c3c060	corpus_index line=3297089 size=4755
+_whitepaper/01_SIMULATION_CORE.md	0x9df3b0	function	f_9df3b0	corpus_index line=290819 size=93
+_whitepaper/01_SIMULATION_CORE.md	0x15445f0	function	f_15445f0	corpus_index line=2224536 size=3984
+_whitepaper/01_SIMULATION_CORE.md	0x9ebf20	function	f_9ebf20	corpus_index line=298319 size=12
+_whitepaper/01_SIMULATION_CORE.md	0x9eac60	function	f_9eac60	corpus_index line=297664 size=3
+_whitepaper/01_SIMULATION_CORE.md	0x158c1f0	function	f_158c1f0	corpus_index line=2261789 size=2334
+_whitepaper/01_SIMULATION_CORE.md	0x1ca2e50	function	f_1ca2e50	corpus_index line=3329952 size=2152
+_whitepaper/01_SIMULATION_CORE.md	0x157ddb0	function	f_157ddb0	corpus_index line=2254378 size=160
+_whitepaper/01_SIMULATION_CORE.md	0x15741e0	function	f_15741e0	corpus_index line=2248652 size=952
+_whitepaper/01_SIMULATION_CORE.md	0x19a4be0	function	f_19a4be0	corpus_index line=2818949 size=731
+_whitepaper/01_SIMULATION_CORE.md	0x9800d0	function	f_9800d0	corpus_index line=231887 size=2459
+_whitepaper/01_SIMULATION_CORE.md	0x981a00	function	f_981a00	corpus_index line=232529 size=1685
+_whitepaper/01_SIMULATION_CORE.md	0x25276f0	function	f_25276f0	corpus_index line=4757248 size=338
+_whitepaper/01_SIMULATION_CORE.md	0x8732b0	function	f_8732b0	corpus_index line=51222 size=646
+_whitepaper/01_SIMULATION_CORE.md	0x25a7610	function	f_25a7610	corpus_index line=4840401 size=30
+_whitepaper/01_SIMULATION_CORE.md	0x24cd530	function	f_24cd530	corpus_index line=4708340 size=2557
+_whitepaper/01_SIMULATION_CORE.md	0x12bd280	function	f_12bd280	corpus_index line=1922586 size=3
+_whitepaper/01_SIMULATION_CORE.md	0x1e660190	global	i64	globals_index type=i64 size=8 owners=179
+_whitepaper/01_SIMULATION_CORE.md	0x143acd0	function	Cdatabase__es_base	corpus_index line=2072351 size=39622
+_whitepaper/01_SIMULATION_CORE.md	0x40d9908	quantity	quantity	literal_hits=4 first=0x143acd0:Cdatabase__es_base:2073818
+_whitepaper/01_SIMULATION_CORE.md	0x25b58e0	function	io_read	corpus_index line=4846223 size=452
+_whitepaper/01_SIMULATION_CORE.md	0x25b5ea0	function	io_write	corpus_index line=4846541 size=421
+_whitepaper/01_SIMULATION_CORE.md	0x146c790	function	f_146c790	corpus_index line=2101845 size=636
+_whitepaper/01_SIMULATION_CORE.md	0x70eeaa50	global	u32	globals_index type=u32 size=4 owners=4
+_whitepaper/01_SIMULATION_CORE.md	0x46208908	global	i64	globals_index type=i64 size=8 owners=3069
+_whitepaper/01_SIMULATION_CORE.md	0x645310	quantity	quantity	literal_hits=10171 first=0x856c70:f_856c70:37217
+_whitepaper/01_SIMULATION_CORE.md	0x147d030	function	f_147d030	corpus_index line=2111365 size=67561
+_whitepaper/01_SIMULATION_CORE.md	0x4e415449	tag	NATI	literal_hits=5 be="NATI" le="ITAN" orientation=big-endian comparators=5
+_whitepaper/01_SIMULATION_CORE.md	0x8c5310	function	f_8c5310	corpus_index line=114686 size=211
+_whitepaper/01_SIMULATION_CORE.md	0x8c5500	function	f_8c5500	corpus_index line=114749 size=391
+_whitepaper/01_SIMULATION_CORE.md	0x322a3f4	global	i32	globals_index type=i32 size=4 owners=1015
+_whitepaper/01_SIMULATION_CORE.md	0x32d1920	global	u32	globals_index type=u32 size=4 owners=1
+_whitepaper/01_SIMULATION_CORE.md	0x8b9490	function	variable_store_get	corpus_index line=105569 size=183
+_whitepaper/01_SIMULATION_CORE.md	0x5d85ada0	global	i64	globals_index type=i64 size=8 owners=879
+_whitepaper/01_SIMULATION_CORE.md	0x869870	function	f_869870	corpus_index line=46431 size=668
+_whitepaper/01_SIMULATION_CORE.md	0xe1e9910	global	i64	globals_index type=i64 size=8 owners=57
+_whitepaper/01_SIMULATION_CORE.md	0x914a20	function	f_914a20	corpus_index line=176668 size=6213
+_whitepaper/01_SIMULATION_CORE.md	0xd65da58	global	i64	globals_index type=i64 size=8 owners=735
+_whitepaper/02_ECONOMY.md	0x23e8e70	function	calc_incitation_etud_sup	corpus_index line=4547717 size=1119
+_whitepaper/02_ECONOMY.md	0x1c904b0	function	init_taxe	corpus_index line=3318429 size=1568
+_whitepaper/02_ECONOMY.md	0x1705700	function	f_1705700	corpus_index line=2551240 size=1248
+_whitepaper/02_ECONOMY.md	0x170fd40	function	bank_updateInterestRate	corpus_index line=2558076 size=809
+_whitepaper/02_ECONOMY.md	0x621768	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/03_MILITARY.md	0x18fd700	function	add_construction	corpus_index line=2706729 size=8467
+_whitepaper/03_MILITARY.md	0x1cba4d0	function	prix_normal_construction	corpus_index line=3345743 size=281
+_whitepaper/03_MILITARY.md	0x24c7870	function	calcul_cout_reconstruction	corpus_index line=4705085 size=501
+_whitepaper/03_MILITARY.md	0x24c5200	function	calc_unites	corpus_index line=4703687 size=9838
+_whitepaper/03_MILITARY.md	0x219cfb0	function	gestion_popu_warville	corpus_index line=4125085 size=4172
+_whitepaper/03_MILITARY.md	0x182afc0	function	calc_cata_victimes_initiales	corpus_index line=2624885 size=696 conflict=names.tsv/assert_names.tsv
+_whitepaper/03_MILITARY.md	0x619ca0	quantity	quantity	literal_hits=1 first=0x205eb70:f_205eb70:3910430
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x620ee0	function	f_620ee0	corpus_index line=6295747 size=31
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x46208908	global	i64	globals_index type=i64 size=8 owners=3069
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x645310	quantity	quantity	literal_hits=10171 first=0x856c70:f_856c70:37217
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215d460	function	f_215d460	corpus_index line=4084440 size=58
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215cd40	function	f_215cd40	corpus_index line=4084223 size=1287
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215ba00	function	f_215ba00	corpus_index line=4083536 size=218
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd7ef0	function	f_1cd7ef0	corpus_index line=3361881 size=127
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x6210c0	quantity	quantity	literal_hits=3 first=0x1333d20:f_1333d20:1975740
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x6212a0	quantity	quantity	literal_hits=1 first=0x1cd7ef0:f_1cd7ef0:3361904
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x621480	quantity	quantity	literal_hits=13 first=0x1333d20:f_1333d20:1975730
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2143660	function	f_2143660	corpus_index line=4069078 size=1063
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x621660	quantity	quantity	literal_hits=6 first=0x1cd7ef0:f_1cd7ef0:3361906
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215d330	function	f_215d330	corpus_index line=4084405 size=302
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2149fc0	function	f_2149fc0	corpus_index line=4073083 size=785
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x214a2e0	function	f_214a2e0	corpus_index line=4073184 size=815
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x534f4c56	tag	SOLV	literal_hits=9 be="SOLV" le="VLOS" orientation=big-endian comparators=7
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x31444943	tag	1DIC	literal_hits=6 be="1DIC" le="CID1" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x15ee940	function	Cdlg_action_law___event	corpus_index line=2333622 size=214
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x324c4942	tag	2LIB	literal_hits=5 be="2LIB" le="BIL2" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x33434150	tag	3CAP	literal_hits=6 be="3CAP" le="PAC3" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x34534543	tag	4SEC	literal_hits=12 be="4SEC" le="CES4" orientation=big-endian comparators=8
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x35494e44	tag	5IND	literal_hits=10 be="5IND" le="DNI5" orientation=big-endian comparators=10
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x484f5350	tag	HOSP	literal_hits=10 be="HOSP" le="PSOH" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x484f5332	tag	HOS2	literal_hits=2 be="HOS2" le="2SOH" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2342a00	function	reaction_yesno_sp8	corpus_index line=4425416 size=4982
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x56494555	tag	VIEU	literal_hits=7 be="VIEU" le="UEIV" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x56494532	tag	VIE2	literal_hits=1 be="VIE2" le="2EIV" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215b3a0	function	f_215b3a0	corpus_index line=4083287 size=306
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4a45554e	tag	JEUN	literal_hits=5 be="JEUN" le="NUEJ" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x22e4ad0	function	taux_critere	corpus_index line=4370043 size=41676 conflict=names.tsv/assert_names.tsv
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x46414d49	tag	FAMI	literal_hits=10 be="FAMI" le="IMAF" orientation=big-endian comparators=8
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x13f3290	function	_geolgame__Cgps__calc_monde	corpus_index line=2029428 size=93356
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x46414d32	tag	FAM2	literal_hits=1 be="FAM2" le="2MAF" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x46454d4d	tag	FEMM	literal_hits=5 be="FEMM" le="MMEF" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x21554b0	function	f_21554b0	corpus_index line=4080002 size=1857
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x46454d32	tag	FEM2	literal_hits=1 be="FEM2" le="2MEF" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41564f52	tag	AVOR	literal_hits=6 be="AVOR" le="ROVA" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2593bd0	function	get_variable	corpus_index line=4827072 size=38229
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4c4f4745	tag	LOGE	literal_hits=6 be="LOGE" le="EGOL" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4c4f4732	tag	LOG2	literal_hits=1 be="LOG2" le="2GOL" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53434f4c	tag	SCOL	literal_hits=12 be="SCOL" le="LOCS" orientation=big-endian comparators=9
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53434f32	tag	SCO2	literal_hits=6 be="SCO2" le="2OCS" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x232ea90	function	reaction_yesno_sp15	corpus_index line=4413477 size=22629 conflict=names.tsv/assert_names.tsv
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x494e5445	tag	INTE	literal_hits=8 be="INTE" le="ETNI" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x48554d41	tag	HUMA	literal_hits=4 be="HUMA" le="AMUH" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x22b9d00	function	cmpcode_reaction_sp4	corpus_index line=4343325 size=6445
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x48554d32	tag	HUM2	literal_hits=1 be="HUM2" le="2MUH" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x50524f53	tag	PROS	literal_hits=6 be="PROS" le="SORP" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cfb560	function	calc_effet_loi	corpus_index line=3392581 size=22288
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x43484153	tag	CHAS	literal_hits=3 be="CHAS" le="SAHC" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd4110	function	f_1cd4110	corpus_index line=3359550 size=175
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x48414e44	tag	HAND	literal_hits=8 be="HAND" le="DNAH" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x434f4e53	tag	CONS	literal_hits=6 be="CONS" le="SNOC" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x414e494d	tag	ANIM	literal_hits=2 be="ANIM" le="MINA" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4a455558	tag	JEUX	literal_hits=3 be="JEUX" le="XUEJ" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x52454348	tag	RECH	literal_hits=11 be="RECH" le="HCER" orientation=big-endian comparators=7
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x52454332	tag	REC2	literal_hits=3 be="REC2" le="2CER" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x50485953	tag	PHYS	literal_hits=4 be="PHYS" le="SYHP" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41535452	tag	ASTR	literal_hits=3 be="ASTR" le="RTSA" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53504143	tag	SPAC	literal_hits=26 be="SPAC" le="CAPS" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x22f1a70	function	reaction_idyesno	corpus_index line=4379105 size=18455 conflict=names.tsv/assert_names.tsv
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4145524f	tag	AERO	literal_hits=2 be="AERO" le="OREA" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x47454e45	tag	GENE	literal_hits=4 be="GENE" le="ENEG" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53494441	tag	SIDA	literal_hits=8 be="SIDA" le="ADIS" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x43414e43	tag	CANC	literal_hits=5 be="CANC" le="CNAC" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x43554c54	tag	CULT	literal_hits=46 be="CULT" le="TLUC" orientation=big-endian comparators=30
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1e2eef0	function	gere_histo	corpus_index line=3597927 size=25182
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x43554c32	tag	CUL2	literal_hits=4 be="CUL2" le="2LUC" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4d555356	tag	MUSV	literal_hits=7 be="MUSV" le="VSUM" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4d555349	tag	MUSI	literal_hits=8 be="MUSI" le="ISUM" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1e18460	function	getval_rdv_rdv_test_cmp	corpus_index line=3584821 size=23860
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4d555352	tag	MUSR	literal_hits=2 be="MUSR" le="RSUM" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1e38e40	function	f_1e38e40	corpus_index line=3603967 size=1148
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x5045494e	tag	PEIN	literal_hits=2 be="PEIN" le="NIEP" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x22ad5a0	function	cmpcode_reaction	corpus_index line=4336661 size=9436 conflict=names.tsv/assert_names.tsv
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4c495454	tag	LITT	literal_hits=4 be="LITT" le="TTIL" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x43494e45	tag	CINE	literal_hits=3 be="CINE" le="ENIC" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54484541	tag	THEA	literal_hits=2 be="THEA" le="AEHT" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x44414e53	tag	DANS	literal_hits=2 be="DANS" le="SNAD" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4d4f4445	tag	MODE	literal_hits=5 be="MODE" le="EDOM" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x142f4d0	function	f_142f4d0	corpus_index line=2065748 size=3203
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41524348	tag	ARCH	literal_hits=3 be="ARCH" le="HCRA" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4d454449	tag	MEDI	literal_hits=3 be="MEDI" le="IDEM" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x219e5e0	function	f_219e5e0	corpus_index line=4125907 size=3622
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41524d45	tag	ARME	literal_hits=14 be="ARME" le="EMRA" orientation=big-endian comparators=11
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53454e41	tag	SENA	literal_hits=7 be="SENA" le="ANES" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1be3950	function	f_1be3950	corpus_index line=3248999 size=852
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41524d52	tag	ARMR	literal_hits=4 be="ARMR" le="RMRA" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41524d33	tag	ARM3	literal_hits=1 be="ARM3" le="3MRA" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x153fbe0	function	f_153fbe0	corpus_index line=2221845 size=883
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53504f52	tag	SPOR	literal_hits=38 be="SPOR" le="ROPS" orientation=big-endian comparators=29
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53504f32	tag	SPO2	literal_hits=1 be="SPO2" le="2OPS" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x464f4f54	tag	FOOT	literal_hits=7 be="FOOT" le="TOOF" orientation=big-endian comparators=7
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54454e4e	tag	TENN	literal_hits=4 be="TENN" le="NNET" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4155544f	tag	AUTO	literal_hits=5 be="AUTO" le="OTUA" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x454e5649	tag	ENVI	literal_hits=9 be="ENVI" le="IVNE" orientation=big-endian comparators=7
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x5452414e	tag	TRAN	literal_hits=5 be="TRAN" le="NART" orientation=big-endian comparators=5
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54524132	tag	TRA2	literal_hits=1 be="TRA2" le="2ART" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54524149	tag	TRAI	literal_hits=2 be="TRAI" le="IART" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1a19240	function	f_1a19240	corpus_index line=2920430 size=942
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4156494f	tag	AVIO	literal_hits=2 be="AVIO" le="OIVA" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x524f5554	tag	ROUT	literal_hits=4 be="ROUT" le="TUOR" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x494e4455	tag	INDU	literal_hits=5 be="INDU" le="UDNI" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x454e4552	tag	ENER	literal_hits=7 be="ENER" le="RENE" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x454e4545	tag	ENEE	literal_hits=6 be="ENEE" le="EENE" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41475249	tag	AGRI	literal_hits=5 be="AGRI" le="IRGA" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x50454348	tag	PECH	literal_hits=2 be="PECH" le="HCEP" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4a555354	tag	JUST	literal_hits=51 be="JUST" le="TSUJ" orientation=big-endian comparators=7
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4a555332	tag	JUS2	literal_hits=1 be="JUS2" le="2SUJ" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54455252	tag	TERR	literal_hits=18 be="TERR" le="RRET" orientation=big-endian comparators=16
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53454354	tag	SECT	literal_hits=5 be="SECT" le="TCES" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x41525045	tag	ARPE	literal_hits=5 be="ARPE" le="EPRA" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54464f31	tag	TFO1	literal_hits=1 be="TFO1" le="1OFT" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54464f32	tag	TFO2	literal_hits=1 be="TFO2" le="2OFT" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54464f33	tag	TFO3	literal_hits=1 be="TFO3" le="3OFT" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54464f34	tag	TFO4	literal_hits=1 be="TFO4" le="4OFT" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x54464f35	tag	TFO5	literal_hits=2 be="TFO5" le="5OFT" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x484f4d4f	tag	HOMO	literal_hits=11 be="HOMO" le="OMOH" orientation=big-endian comparators=10
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x45555448	tag	EUTH	literal_hits=5 be="EUTH" le="HTUE" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x43414e4e	tag	CANN	literal_hits=10 be="CANN" le="NNAC" orientation=big-endian comparators=7
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4144484f	tag	ADHO	literal_hits=1 be="ADHO" le="OHDA" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2242ba0	function	f_2242ba0	corpus_index line=4247681 size=1762
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x42505249	tag	BPRI	literal_hits=3 be="BPRI" le="IRPB" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0xe49b40	function	f_e49b40	corpus_index line=1185712 size=38890
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x454d504f	tag	EMPO	literal_hits=4 be="EMPO" le="OPME" orientation=big-endian comparators=2
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x494d4d47	tag	IMMG	literal_hits=7 be="IMMG" le="GMMI" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x414c434f	tag	ALCO	literal_hits=6 be="ALCO" le="OCLA" orientation=big-endian comparators=6
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x454e4641	tag	ENFA	literal_hits=5 be="ENFA" le="AFNE" orientation=big-endian comparators=3
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x22f8c10	function	f_22f8c10	corpus_index line=4382625 size=11340
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4152454e	tag	AREN	literal_hits=1 be="AREN" le="NERA" orientation=big-endian comparators=1
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x53455256	tag	SERV	literal_hits=25 be="SERV" le="VRES" orientation=big-endian comparators=19
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x153cc10	function	f_153cc10	corpus_index line=2220305 size=491
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0xd34f4c56	tag	SOLV	literal_hits=9 be="SOLV" le="VLOS" orientation=big-endian comparators=7 masked_to=0x534f4c56
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x4d52454c	tag	MREL	literal_hits=4 be="MREL" le="LERM" orientation=big-endian comparators=4
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x172f350	function	f_172f350	corpus_index line=2571401 size=462
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215e6d0	function	orient_action_fictive_theme	corpus_index line=4085245 size=677
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd8ba0	function	f_1cd8ba0	corpus_index line=3362302 size=23
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x534f4c42	tag	SOLB	literal_hits=14 be="SOLB" le="BLOS" orientation=big-endian comparators=10
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x7fffffff	quantity	quantity	literal_hits=271 first=0x7440:f_7440:2523
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd6d20	function	f_1cd6d20	corpus_index line=3361347 size=1697
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd73d0	function	f_1cd73d0	corpus_index line=3361531 size=1279
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd78d0	function	f_1cd78d0	corpus_index line=3361697 size=1419
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x80000000	quantity	quantity	literal_hits=937 first=0x7440:f_7440:2519
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0xffffff	quantity	quantity	literal_hits=73 first=0x5c8e0:f_5c8e0:10808
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2d000000	quantity	quantity	literal_hits=2 first=0x2149fc0:f_2149fc0:4073153
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x2b000000	quantity	quantity	literal_hits=2 first=0x2149fc0:f_2149fc0:4073156
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215be60	function	importance_action	corpus_index line=4083652 size=2899
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x215d4a0	function	f_215d4a0	corpus_index line=4084451 size=456
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x214e560	function	f_214e560	corpus_index line=4075479 size=490
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x214a610	function	f_214a610	corpus_index line=4073288 size=1381
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cc4440	function	stat_popularite_add	corpus_index line=3349581 size=156
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x219cfb0	function	gestion_popu_warville	corpus_index line=4125085 size=4172
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x9d0ba0	function	f_9d0ba0	corpus_index line=282215 size=5853
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1412580	function	f_1412580	corpus_index line=2051368 size=3857
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1a3e500	function	f_1a3e500	corpus_index line=2938262 size=41
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x1cd2170	function	f_1cd2170	corpus_index line=3358463 size=750
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x5d859dc8	global	i64	globals_index type=i64 size=8 owners=726
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x146e300	function	f_146e300	corpus_index line=2102875 size=13289
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x247eb60	function	add_trouble	corpus_index line=4664527 size=5779 conflict=names.tsv/assert_names.tsv
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x248bc10	function	trouble_update_gravite	corpus_index line=4672015 size=1297 conflict=names.tsv/assert_names.tsv
+_whitepaper/04_POLITICS_AND_POPULARITY.md	0x5c014	quantity	quantity	literal_hits=1 first=0x248bc10:trouble_update_gravite:4672034
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x5d85ada0	global	i64	globals_index type=i64 size=8 owners=879
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x434f4e4a	tag	CONJ	literal_hits=11 be="CONJ" le="JNOC" orientation=big-endian comparators=8
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x5449544e	tag	TITN	literal_hits=6 be="TITN" le="NTIT" orientation=big-endian comparators=4
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x21c0400	function	is_perso_corruptible	corpus_index line=4157673 size=71 conflict=names.tsv/assert_names.tsv
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x15a5e20	function	gere_rdv	corpus_index line=2276482 size=6974
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x1baef80	function	Cdlg_requete__win_rdv_nego	corpus_index line=3219655 size=34089
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x22e4ad0	function	taux_critere	corpus_index line=4370043 size=41676 conflict=names.tsv/assert_names.tsv
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x15a81f0	function	refuse_rdv	corpus_index line=2277935 size=2241
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x24178e0	function	CDuel_TV___event	corpus_index line=4583957 size=2186
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x2a04f10	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/05_PERSONALITY_AND_CHARACTERS.md	0x29a09f0	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x47938840	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x1d60ce0	function	traitement_loi	corpus_index line=3457734 size=14830
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x1cfb560	function	calc_effet_loi	corpus_index line=3392581 size=22288
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x1d593e0	function	set_vote	corpus_index line=3452941 size=5166 conflict=names.tsv/assert_names.tsv
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x2160650	function	parlement_vote_lawpack_chambre1_estimation	corpus_index line=4086147 size=5525 conflict=names.tsv/assert_names.tsv
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x16248c0	function	Cdlg_action_law__calc_vote_peuple	corpus_index line=2372833 size=2627 conflict=names.tsv/assert_names.tsv
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x21625a0	function	parlement_vote_lawpack_chambre2_pres_region	corpus_index line=4087018 size=1435
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x1c904b0	function	init_taxe	corpus_index line=3318429 size=1568
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x1d647c0	function	traitement_loi_building	corpus_index line=3460269 size=3477
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x645310	quantity	quantity	literal_hits=10171 first=0x856c70:f_856c70:37217
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x6217f4	quantity	quantity	literal_hits=28 first=0x9833d0:f_9833d0:233983
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x6222d8	quantity	quantity	literal_hits=64 first=0x9d74f0:f_9d74f0:285963
+_whitepaper/06_LAWS_AND_LEGISLATION.md	0x1d5cc40	function	traitement_lawpack	corpus_index line=3454979 size=16539 conflict=names.tsv/assert_names.tsv
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0xd53a40	function	gestion_epidemies	corpus_index line=975953 size=1986
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6452c0	quantity	quantity	literal_hits=3 first=0xa00c50:f_a00c50:310251
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x621710	quantity	quantity	literal_hits=2 first=0x183fbd0:f_183fbd0:2640199
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x182b0c0	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x619ca0	quantity	quantity	literal_hits=1 first=0x205eb70:f_205eb70:3910430
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6434a8	quantity	quantity	literal_hits=6 first=0x1051c30:extinction_animaux_2100:1480142
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x1051c30	function	extinction_animaux_2100	corpus_index line=1479956 size=1896
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x1050360	function	depense_perturbateurs_endocriniens	corpus_index line=1479061 size=286 conflict=names.tsv/assert_names.tsv
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x182afc0	function	calc_cata_victimes_initiales	corpus_index line=2624885 size=696 conflict=names.tsv/assert_names.tsv
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6216c4	quantity	quantity	literal_hits=4 first=0x1c82110:f_1c82110:3312018
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6216cc	quantity	quantity	literal_hits=4 first=0x1c82110:f_1c82110:3312019
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x621698	quantity	quantity	literal_hits=1 first=0x1d9cbd0:f_1d9cbd0:3504922
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6216a8	quantity	quantity	literal_hits=7 first=0x1a4e610:f_1a4e610:2945374
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x621690	quantity	quantity	literal_hits=6 first=0x1d9cbd0:f_1d9cbd0:3504894
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6216bc	quantity	quantity	literal_hits=21 first=0x1bfcc10:f_1bfcc10:3264231
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6216d4	quantity	quantity	literal_hits=6 first=0x1d9cbd0:f_1d9cbd0:3505034
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x6216dc	quantity	quantity	literal_hits=1 first=0x1d9cbd0:f_1d9cbd0:3505006
+_whitepaper/07_DEMOGRAPHY_AND_ENVIRONMENT.md	0x23f6e40	function	calc_augm_potentielle_domaine	corpus_index line=4555877 size=2304
+_whitepaper/08_REGIONS_CITIES_AND_INFRASTRUCTURE.md	0x645310	quantity	quantity	literal_hits=10171 first=0x856c70:f_856c70:37217
+_whitepaper/08_REGIONS_CITIES_AND_INFRASTRUCTURE.md	0x30ce44	quantity	quantity	literal_hits=13 first=0x147d030:f_147d030:2117174
+_whitepaper/08_REGIONS_CITIES_AND_INFRASTRUCTURE.md	0x41515445	data	POP_AQTE	data_key="POP_AQTE" file=data/gt/xim.gt.tsv line=21637
+_whitepaper/08_REGIONS_CITIES_AND_INFRASTRUCTURE.md	0x50455445	data	POP_PETE	data_key="POP_PETE" file=data/gt/xim.gt.tsv line=21639
+_whitepaper/README.md	0x8b9490	function	variable_store_get	corpus_index line=105569 size=183
+_whitepaper/README.md	0x46208908	global	i64	globals_index type=i64 size=8 owners=3069
+_whitepaper/README.md	0x47938840	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/README.md	0x13f3290	function	_geolgame__Cgps__calc_monde	corpus_index line=2029428 size=93356
+_whitepaper/README.md	0x1409f40	function	calc_monde_debut_tour_etapes	corpus_index line=2045281 size=16575
+_whitepaper/README.md	0x143acd0	function	Cdatabase__es_base	corpus_index line=2072351 size=39622
+_whitepaper/README.md	0x1705700	function	f_1705700	corpus_index line=2551240 size=1248
+_whitepaper/README.md	0x620ee0	function	f_620ee0	corpus_index line=6295747 size=31
+_whitepaper/README.md	0x621660	quantity	quantity	literal_hits=6 first=0x1cd7ef0:f_1cd7ef0:3361906
+_whitepaper/README.md	0xd34f4c56	tag	SOLV	literal_hits=9 be="SOLV" le="VLOS" orientation=big-endian comparators=7 masked_to=0x534f4c56
+_whitepaper/README.md	0x7fffffff	quantity	quantity	literal_hits=271 first=0x7440:f_7440:2523
+_whitepaper/README.md	0x534f4c56	tag	SOLV	literal_hits=9 be="SOLV" le="VLOS" orientation=big-endian comparators=7
+_whitepaper/README.md	0x215be60	function	importance_action	corpus_index line=4083652 size=2899
+_whitepaper/README.md	0x215d4a0	function	f_215d4a0	corpus_index line=4084451 size=456
+_whitepaper/README.md	0x21c0400	function	is_perso_corruptible	corpus_index line=4157673 size=71 conflict=names.tsv/assert_names.tsv
+_whitepaper/README.md	0x21ce890	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/README.md	0x1d58a10	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/README.md	0x1d4a920	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/README.md	0x1d60ce0	function	traitement_loi	corpus_index line=3457734 size=14830
+_whitepaper/README.md	0x16b8a40	unresolved	-	function=miss;global=miss;literal=miss(0);data=miss
+_whitepaper/README.md	0x645310	quantity	quantity	literal_hits=10171 first=0x856c70:f_856c70:37217
